@@ -1,0 +1,4 @@
+crawler:
+  period: 20s
+http:
+  quotes-url: https://www.goodreads.com/quotes

@@ -1,0 +1,12 @@
+crawler:
+  period: 1h
+discord:
+  bot-token: 1337
+  webhook:
+    id: 444
+    token: 606
+  channel-id: 000000001
+  app-id: 56712873621
+quarkus:
+  scheduler:
+    enabled: false
