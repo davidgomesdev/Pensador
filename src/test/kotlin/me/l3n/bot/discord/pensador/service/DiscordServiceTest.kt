@@ -1,5 +1,7 @@
 package me.l3n.bot.discord.pensador.service
 
+//import dev.kord.core.Kord
+//
 //@QuarkusTest
 //class DiscordServiceTest {
 //

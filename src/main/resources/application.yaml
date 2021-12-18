@@ -1,4 +1,11 @@
-crawler:
-  period: 20s
+quarkus:
+  log:
+    level: ERROR
+    category:
+      "me.l3n.bot.discord":
+        level: DEBUG
+
+#cron-expr: "* 0 9,13,17 * * ? *"
+cron-expr: "*/15 * * * * ?"
 http:
   quotes-url: https://www.goodreads.com/quotes

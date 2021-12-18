@@ -47,9 +47,13 @@ dependencies {
 group = "me.l3n.bot.discord.pensador"
 version = "1.0.0-SNAPSHOT"
 
+tasks.quarkusDev {
+    workingDir = rootProject.projectDir.toString()
+}
+
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 tasks.withType<JavaCompile> {

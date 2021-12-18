@@ -9,8 +9,12 @@ import javax.enterprise.context.ApplicationScoped
 @ApplicationScoped
 class CrawlerService(private val config: HttpConfig, private val httpClient: HttpClient) {
 
+    private val extractQuoteRegex = Regex("(?<=“)(.*?)(?=”)")
+
     suspend fun crawlRandomQuote(): Quote {
-        val html = httpClient.get<String>(config.quotesUrl())
+        val page = (0 until 20).random() + 1
+        val html = httpClient.get<String>("${config.quotesUrl()}?page=$page")
+
         val rootElement = Jsoup.parse(html)
         val quotes = rootElement.getElementsByClass("quoteDetails")
 
@@ -19,14 +23,15 @@ class CrawlerService(private val config: HttpConfig, private val httpClient: Htt
 
         val imageUrl = randomQuote.getElementsByTag("img")?.attr("src")
         val text = randomQuote.getElementsByClass("quoteText").text()
-            .trim()
         val author = randomQuote.getElementsByClass("authorOrTitle").first().text()
 
         return Quote(
             Author(imageUrl, author),
-            text,
+            extractQuote(text),
         )
     }
+
+    private fun extractQuote(text: String) = extractQuoteRegex.find(text)?.value ?: ""
 }
 
 data class Quote(

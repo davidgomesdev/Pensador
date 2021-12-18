@@ -1,6 +1,8 @@
 package me.l3n.bot.discord.pensador.scheduler
 
 import io.quarkus.scheduler.Scheduled
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.l3n.bot.discord.pensador.service.CrawlerService
 import me.l3n.bot.discord.pensador.service.DiscordService
@@ -15,10 +17,24 @@ class PensadorScheduler(private val discord: DiscordService, private val crawler
     @Inject
     lateinit var log: Logger
 
-    @Scheduled(every = "{crawler.period}")
+    @Scheduled(cron = "{cron-expr}")
     fun crawl() = runBlocking {
-        val quote = crawler.crawlRandomQuote()
+        val quote = async {
+            log.debug("Crawling a quote")
 
-        discord.sendQuote(quote)
+            val result = crawler.crawlRandomQuote()
+            log.info("Crawled a random quote")
+
+            result
+        }
+
+        val cleanupJob = launch {
+            discord.cleanupFreshQuotes()
+            log.info("Cleaned up fresh quotes channel")
+        }
+        cleanupJob.join()
+
+        discord.sendQuote(quote.await())
+        log.info("Sent a fresh quote")
     }
 }
