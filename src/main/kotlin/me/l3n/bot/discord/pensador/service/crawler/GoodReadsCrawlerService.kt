@@ -11,7 +11,7 @@ import javax.enterprise.context.ApplicationScoped
 @IfBuildProperty(name = "source", stringValue = "goodreads", enableIfMissing = true)
 class GoodReadsCrawlerService(private val httpClient: HttpClient) : CrawlerService {
 
-    @ConfigProperty(name = "quotes-url.goodreads")
+    @ConfigProperty(name = "url.goodreads-quotes")
     private lateinit var quotesUrl: String
 
     private val extractQuoteRegex = Regex("(?<=“)(.*?)(?=”)")
@@ -20,17 +20,19 @@ class GoodReadsCrawlerService(private val httpClient: HttpClient) : CrawlerServi
         val page = (0 until 20).random() + 1
         val html = httpClient.get<String>("$quotesUrl?page=$page")
 
-        val rootElement = Jsoup.parse(html)
-        val quotes = rootElement.getElementsByClass("quoteDetails")
+        val root = Jsoup.parse(html)
+        val quotes = root.getElementsByClass("quoteDetails")
 
         val randomIndex = (0 until quotes.count()).random()
         val randomQuote = quotes[randomIndex]
 
-        val imageUrl = randomQuote.getElementsByTag("img")?.attr("src")
-        val text = randomQuote.getElementsByClass("quoteText").text()
+        val imageUrl = randomQuote
+            .getElementsByTag("img")
+            ?.attr("src")
         val author = extractNameOnly(
             randomQuote.getElementsByClass("authorOrTitle").first().text()
         )
+        val text = randomQuote.getElementsByClass("quoteText").text()
 
         return Quote(
             Author(imageUrl, author),

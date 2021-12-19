@@ -9,6 +9,8 @@ cron-expr: "* 0 9,13,17 * * ? *"
 "%dev":
   cron-expr: "*/15 * * * * ?"
 
-quotes-url:
-  goodreads: https://www.goodreads.com/quotes
-  pensador: https://www.pensador.com/populares
+url:
+  goodreads-quotes: https://www.goodreads.com/quotes
+  pensador:
+    base: https://www.pensador.com
+    populares: ${url.pensador.base}/populares
