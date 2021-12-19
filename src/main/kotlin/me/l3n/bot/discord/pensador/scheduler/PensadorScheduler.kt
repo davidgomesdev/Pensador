@@ -4,8 +4,8 @@ import io.quarkus.scheduler.Scheduled
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import me.l3n.bot.discord.pensador.service.CrawlerService
 import me.l3n.bot.discord.pensador.service.DiscordService
+import me.l3n.bot.discord.pensador.service.crawler.CrawlerService
 import org.jboss.logging.Logger
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject

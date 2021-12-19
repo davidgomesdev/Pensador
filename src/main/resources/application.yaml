@@ -5,7 +5,12 @@ quarkus:
       "me.l3n.bot.discord":
         level: DEBUG
 
-#cron-expr: "* 0 9,13,17 * * ? *"
-cron-expr: "*/15 * * * * ?"
-http:
-  quotes-url: https://www.goodreads.com/quotes
+cron-expr: "* 0 9,13,17 * * ? *"
+"%dev":
+  cron-expr: "*/15 * * * * ?"
+
+url:
+  goodreads-quotes: https://www.goodreads.com/quotes
+  pensador:
+    base: https://www.pensador.com
+    populares: ${url.pensador.base}/populares
