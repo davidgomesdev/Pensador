@@ -1,6 +1,7 @@
 package me.l3n.bot.discord.pensador.scheduler
 
 import io.quarkus.scheduler.Scheduled
+import io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -17,7 +18,7 @@ class PensadorScheduler(private val discord: DiscordService, private val crawler
     @Inject
     lateinit var log: Logger
 
-    @Scheduled(cron = "{cron-expr}")
+    @Scheduled(cron = "{cron-expr}", concurrentExecution = SKIP)
     fun crawl() = runBlocking {
         val quote = async {
             log.debug("Crawling a quote")
