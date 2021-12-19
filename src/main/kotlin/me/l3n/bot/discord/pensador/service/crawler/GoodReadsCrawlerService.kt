@@ -3,19 +3,22 @@ package me.l3n.bot.discord.pensador.service.crawler
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.quarkus.arc.properties.IfBuildProperty
-import me.l3n.bot.discord.pensador.config.HttpConfig
+import org.eclipse.microprofile.config.inject.ConfigProperty
 import org.jsoup.Jsoup
 import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 @IfBuildProperty(name = "source", stringValue = "goodreads", enableIfMissing = true)
-class GoodReadsCrawlerService(private val config: HttpConfig, private val httpClient: HttpClient) : CrawlerService {
+class GoodReadsCrawlerService(private val httpClient: HttpClient) : CrawlerService {
+
+    @ConfigProperty(name = "quotes-url.goodreads")
+    private lateinit var quotesUrl: String
 
     private val extractQuoteRegex = Regex("(?<=“)(.*?)(?=”)")
 
     override suspend fun crawlRandomQuote(): Quote {
         val page = (0 until 20).random() + 1
-        val html = httpClient.get<String>("${config.quotesUrl()}?page=$page")
+        val html = httpClient.get<String>("$quotesUrl?page=$page")
 
         val rootElement = Jsoup.parse(html)
         val quotes = rootElement.getElementsByClass("quoteDetails")

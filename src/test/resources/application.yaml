@@ -1,5 +1,3 @@
-crawler:
-  period: 1h
 discord:
   bot-token: 1337
   webhook:
