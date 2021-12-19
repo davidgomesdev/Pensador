@@ -9,6 +9,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import me.l3n.bot.discord.pensador.config.DiscordConfiguration
+import me.l3n.bot.discord.pensador.service.crawler.Quote
 import me.l3n.bot.discord.pensador.util.getTextChannel
 import org.jboss.logging.Logger
 import javax.annotation.PostConstruct

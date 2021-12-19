@@ -1,17 +1,19 @@
-package me.l3n.bot.discord.pensador.service
+package me.l3n.bot.discord.pensador.service.crawler
 
 import io.ktor.client.*
 import io.ktor.client.request.*
+import io.quarkus.arc.properties.IfBuildProperty
 import me.l3n.bot.discord.pensador.config.HttpConfig
 import org.jsoup.Jsoup
 import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
-class CrawlerService(private val config: HttpConfig, private val httpClient: HttpClient) {
+@IfBuildProperty(name = "source", stringValue = "goodreads", enableIfMissing = true)
+class GoodReadsCrawlerService(private val config: HttpConfig, private val httpClient: HttpClient) : CrawlerService {
 
     private val extractQuoteRegex = Regex("(?<=“)(.*?)(?=”)")
 
-    suspend fun crawlRandomQuote(): Quote {
+    override suspend fun crawlRandomQuote(): Quote {
         val page = (0 until 20).random() + 1
         val html = httpClient.get<String>("${config.quotesUrl()}?page=$page")
 
@@ -23,7 +25,9 @@ class CrawlerService(private val config: HttpConfig, private val httpClient: Htt
 
         val imageUrl = randomQuote.getElementsByTag("img")?.attr("src")
         val text = randomQuote.getElementsByClass("quoteText").text()
-        val author = randomQuote.getElementsByClass("authorOrTitle").first().text()
+        val author = extractNameOnly(
+            randomQuote.getElementsByClass("authorOrTitle").first().text()
+        )
 
         return Quote(
             Author(imageUrl, author),
@@ -32,14 +36,9 @@ class CrawlerService(private val config: HttpConfig, private val httpClient: Htt
     }
 
     private fun extractQuote(text: String) = extractQuoteRegex.find(text)?.value ?: ""
+
+    /**
+     * @return [text] with only the name (no commas for instance)
+     */
+    private fun extractNameOnly(text: String) = AUTHOR_NAME_REGEX.find(text)?.value?.trim() ?: ""
 }
-
-data class Quote(
-    val author: Author,
-    val text: String,
-)
-
-data class Author(
-    val imageUrl: String?,
-    val name: String,
-)

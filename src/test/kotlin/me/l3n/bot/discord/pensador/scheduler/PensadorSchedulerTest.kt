@@ -6,10 +6,10 @@ import io.mockk.mockk
 import io.quarkus.test.junit.QuarkusMock
 import io.quarkus.test.junit.QuarkusTest
 import kotlinx.coroutines.runBlocking
-import me.l3n.bot.discord.pensador.service.Author
-import me.l3n.bot.discord.pensador.service.CrawlerService
 import me.l3n.bot.discord.pensador.service.DiscordService
-import me.l3n.bot.discord.pensador.service.Quote
+import me.l3n.bot.discord.pensador.service.crawler.Author
+import me.l3n.bot.discord.pensador.service.crawler.CrawlerService
+import me.l3n.bot.discord.pensador.service.crawler.Quote
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import javax.inject.Inject
