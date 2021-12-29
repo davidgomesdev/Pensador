@@ -6,7 +6,6 @@ import dev.kord.core.entity.Webhook
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers.Unconfined
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import me.l3n.bot.discord.pensador.config.DiscordConfiguration
 import me.l3n.bot.discord.pensador.service.crawler.Quote
@@ -33,13 +32,13 @@ class DiscordService(
 
     @DelicateCoroutinesApi
     @PostConstruct
-    fun login() {
+    fun startup() {
         GlobalScope.launch(Unconfined) { kord.login() }
     }
 
     @DelicateCoroutinesApi
     @PreDestroy
-    fun logout() {
+    fun shutdown() {
         GlobalScope.launch(Unconfined) { kord.logout() }
     }
 

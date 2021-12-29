@@ -6,12 +6,13 @@ quarkus:
         level: DEBUG
     file:
       enable: true
+      path: logs/quarkus.log
       rotation:
         max-file-size: 10M
         max-backup-index: 5
         rotate-on-boot: true
 
-cron-expr: "* 0 9,13,17 * * ? *"
+cron-expr: "* 0 9,13,16,20 * * ? *"
 "%dev":
   cron-expr: "*/15 * * * * ?"
 

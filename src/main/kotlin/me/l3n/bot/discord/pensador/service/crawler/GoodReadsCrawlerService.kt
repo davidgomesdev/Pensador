@@ -2,13 +2,15 @@ package me.l3n.bot.discord.pensador.service.crawler
 
 import io.ktor.client.*
 import io.ktor.client.request.*
-import io.quarkus.arc.properties.IfBuildProperty
+import io.quarkus.arc.DefaultBean
+import io.quarkus.arc.lookup.LookupIfProperty
 import org.eclipse.microprofile.config.inject.ConfigProperty
 import org.jsoup.Jsoup
 import javax.enterprise.context.ApplicationScoped
 
+@LookupIfProperty(name = "source", stringValue = "goodreads", lookupIfMissing = true)
+@DefaultBean
 @ApplicationScoped
-@IfBuildProperty(name = "source", stringValue = "goodreads", enableIfMissing = true)
 class GoodReadsCrawlerService(private val httpClient: HttpClient) : CrawlerService {
 
     @ConfigProperty(name = "url.goodreads-quotes")
@@ -18,21 +20,26 @@ class GoodReadsCrawlerService(private val httpClient: HttpClient) : CrawlerServi
 
     override suspend fun crawlRandomQuote(): Quote {
         val page = (0 until 20).random() + 1
-        val html = httpClient.get<String>("$quotesUrl?page=$page")
+        val url = "$quotesUrl?page=$page"
+        val html = httpClient.get<String>()
 
         val root = Jsoup.parse(html)
         val quotes = root.getElementsByClass("quoteDetails")
 
         val randomIndex = (0 until quotes.count()).random()
         val randomQuote = quotes[randomIndex]
+            ?: throw IllegalAccessError("No quote at $randomIndex of '$url'")
 
         val imageUrl = randomQuote
             .getElementsByTag("img")
-            ?.attr("src")
+            .attr("src")
         val author = extractNameOnly(
-            randomQuote.getElementsByClass("authorOrTitle").first().text()
+            randomQuote
+                .getElementsByClass("authorOrTitle").first()?.text()
+                ?: throw IllegalAccessError("No author/title in '$url'")
         )
-        val text = randomQuote.getElementsByClass("quoteText").text()
+        val text = randomQuote
+            .getElementsByClass("quoteText").text()
 
         return Quote(
             Author(imageUrl, author),

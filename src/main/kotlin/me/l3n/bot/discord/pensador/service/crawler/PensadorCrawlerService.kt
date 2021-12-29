@@ -2,7 +2,7 @@ package me.l3n.bot.discord.pensador.service.crawler
 
 import io.ktor.client.*
 import io.ktor.client.request.*
-import io.quarkus.arc.properties.IfBuildProperty
+import io.quarkus.arc.lookup.LookupIfProperty
 import me.l3n.bot.discord.pensador.config.PensadorUrlConfig
 import org.jboss.logging.Logger
 import org.jsoup.Jsoup
@@ -11,8 +11,8 @@ import org.jsoup.nodes.Element
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 
+@LookupIfProperty(name = "source", stringValue = "pensador")
 @ApplicationScoped
-@IfBuildProperty(name = "source", stringValue = "pensador")
 class PensadorCrawlerService(
     private val httpClient: HttpClient,
     private val urlConfig: PensadorUrlConfig,
@@ -35,16 +35,18 @@ class PensadorCrawlerService(
 
         val randomIndex = (0 until quotes.count()).random()
         val randomQuote = quotes[randomIndex]
+            ?: throw IllegalAccessError("No quote at $randomIndex of '$url'")
 
         val authorElement = randomQuote
             .getElementsByClass("autor").first()
-            .getElementsByTag("a").first()
+            ?.getElementsByTag("a")?.first() ?: throw IllegalAccessError("No author in '$url'")
 
         val authorBioURL = authorElement.attr("href")
         val authorName = authorElement.text()
         val imageUrl = getAuthorImageUrl(authorBioURL)
 
-        val text = randomQuote.getElementsByTag("p").first().text()
+        val text = randomQuote
+            .getElementsByTag("p").first()?.text() ?: throw IllegalAccessError("No text in '$url'")
 
         log.info("Parsed whole quote")
 
