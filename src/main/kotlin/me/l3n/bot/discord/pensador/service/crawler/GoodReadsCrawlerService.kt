@@ -1,5 +1,6 @@
 package me.l3n.bot.discord.pensador.service.crawler
 
+import io.quarkus.arc.DefaultBean
 import io.quarkus.arc.lookup.LookupIfProperty
 import org.eclipse.microprofile.config.inject.ConfigProperty
 import org.jsoup.nodes.Document
@@ -12,6 +13,7 @@ private val EXTRACT_QUOTE_REGEX = "(?<=“)(.*?)(?=”)".toRegex()
 private val AUTHOR_NAME_REGEX = "^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ' ]+\$".toRegex()
 
 @LookupIfProperty(name = "source", stringValue = "goodreads", lookupIfMissing = true)
+@DefaultBean
 @ApplicationScoped
 class GoodReadsCrawlerService : CrawlerService() {
 

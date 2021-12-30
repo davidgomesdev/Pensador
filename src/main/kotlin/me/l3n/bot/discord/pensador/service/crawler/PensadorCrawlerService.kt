@@ -1,6 +1,5 @@
 package me.l3n.bot.discord.pensador.service.crawler
 
-import io.quarkus.arc.DefaultBean
 import io.quarkus.arc.lookup.LookupIfProperty
 import kotlinx.coroutines.runBlocking
 import me.l3n.bot.discord.pensador.config.PensadorUrlConfig
@@ -12,7 +11,6 @@ import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 
 @LookupIfProperty(name = "source", stringValue = "pensador")
-@DefaultBean
 @ApplicationScoped
 class PensadorCrawlerService(
     private val urlConfig: PensadorUrlConfig,

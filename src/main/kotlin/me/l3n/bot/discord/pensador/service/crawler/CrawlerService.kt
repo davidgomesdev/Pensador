@@ -2,6 +2,9 @@ package me.l3n.bot.discord.pensador.service.crawler
 
 import io.ktor.client.*
 import io.ktor.client.request.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.map
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -28,13 +31,14 @@ abstract class CrawlerService {
     protected abstract fun getMaxPageCount(): Int
 
     // TODO: turn this into a lazy sequence! (or flow?)
-    suspend fun crawlQuotes(page: Int): List<Quote> {
+    suspend fun crawlQuotes(page: Int): Flow<Quote> {
         val pageUrl = getPageUrl(page)
         val pageHtml = parseHtml(pageUrl)
 
         val quotesHtml = extractQuotesHtml(pageHtml)
 
-        return quotesHtml.map(::parseQuote)
+        return quotesHtml.asFlow()
+            .map(::parseQuote)
     }
 
     abstract fun getPageUrl(page: Int): String
