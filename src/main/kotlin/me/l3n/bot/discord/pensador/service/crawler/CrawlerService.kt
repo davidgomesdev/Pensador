@@ -30,7 +30,6 @@ abstract class CrawlerService {
 
     protected abstract fun getMaxPageCount(): Int
 
-    // TODO: turn this into a lazy sequence! (or flow?)
     suspend fun crawlQuotes(page: Int): Flow<Quote> {
         val pageUrl = getPageUrl(page)
         val pageHtml = parseHtml(pageUrl)
