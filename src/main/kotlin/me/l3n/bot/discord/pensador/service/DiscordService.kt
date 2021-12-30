@@ -3,6 +3,9 @@ package me.l3n.bot.discord.pensador.service
 import dev.kord.core.Kord
 import dev.kord.core.behavior.execute
 import dev.kord.core.entity.Webhook
+import dev.kord.core.event.gateway.DisconnectEvent
+import dev.kord.core.event.gateway.ReadyEvent
+import dev.kord.core.on
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers.Unconfined
 import kotlinx.coroutines.GlobalScope
@@ -33,12 +36,22 @@ class DiscordService(
     @DelicateCoroutinesApi
     @PostConstruct
     fun startup() {
+        kord.on<ReadyEvent> {
+            log.info("Logged in!")
+        }
+
+        log.debug("Logging in...")
         GlobalScope.launch(Unconfined) { kord.login() }
     }
 
     @DelicateCoroutinesApi
     @PreDestroy
     fun shutdown() {
+        kord.on<DisconnectEvent> {
+            log.info("Logged out!")
+        }
+
+        log.debug("Logging out...")
         GlobalScope.launch(Unconfined) { kord.logout() }
     }
 
