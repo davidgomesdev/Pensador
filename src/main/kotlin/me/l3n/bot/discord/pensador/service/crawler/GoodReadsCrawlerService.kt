@@ -1,56 +1,51 @@
 package me.l3n.bot.discord.pensador.service.crawler
 
-import io.ktor.client.*
-import io.ktor.client.request.*
-import io.quarkus.arc.DefaultBean
 import io.quarkus.arc.lookup.LookupIfProperty
 import org.eclipse.microprofile.config.inject.ConfigProperty
-import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
+import org.jsoup.select.Elements
 import javax.enterprise.context.ApplicationScoped
 
+
+private val EXTRACT_QUOTE_REGEX = "(?<=“)(.*?)(?=”)".toRegex()
+private val AUTHOR_NAME_REGEX = "^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ' ]+\$".toRegex()
+
 @LookupIfProperty(name = "source", stringValue = "goodreads", lookupIfMissing = true)
-@DefaultBean
 @ApplicationScoped
-class GoodReadsCrawlerService(private val httpClient: HttpClient) : CrawlerService {
+class GoodReadsCrawlerService : CrawlerService() {
 
     @ConfigProperty(name = "url.goodreads-quotes")
     private lateinit var quotesUrl: String
 
-    private val extractQuoteRegex = Regex("(?<=“)(.*?)(?=”)")
+    override fun getMaxPageCount(): Int = 20
 
-    override suspend fun crawlRandomQuote(): Quote {
-        val page = (0 until 20).random() + 1
-        val url = "$quotesUrl?page=$page"
-        val html = httpClient.get<String>()
+    override fun getPageUrl(page: Int): String = "$quotesUrl?page=$page"
 
-        val root = Jsoup.parse(html)
-        val quotes = root.getElementsByClass("quoteDetails")
+    override fun extractQuotesHtml(rootHtml: Document): Elements =
+        rootHtml.getElementsByClass("quoteDetails")
 
-        val randomIndex = (0 until quotes.count()).random()
-        val randomQuote = quotes[randomIndex]
-            ?: throw IllegalAccessError("No quote at $randomIndex of '$url'")
+    override fun getQuoteContent(quoteHtml: Element): String =
+        extractQuote(quoteHtml.getElementsByClass("quoteText").text())
 
-        val imageUrl = randomQuote
-            .getElementsByTag("img")
-            .attr("src")
-        val author = extractNameOnly(
-            randomQuote
+    override fun getAuthorHtml(quoteHtml: Element): Element =
+        quoteHtml
+
+    override fun getAuthorName(authorHtml: Element): String =
+        extractNameOnly(
+            authorHtml
                 .getElementsByClass("authorOrTitle").first()?.text()
-                ?: throw IllegalAccessError("No author/title in '$url'")
+                ?: throw IllegalAccessError("No author name")
         )
-        val text = randomQuote
-            .getElementsByClass("quoteText").text()
 
-        return Quote(
-            Author(imageUrl, author),
-            extractQuote(text),
-        )
-    }
+    override fun getAuthorImageUrl(authorHtml: Element): String? =
+        authorHtml.getElementsByTag("img")
+            .attr("src")
 
-    private fun extractQuote(text: String) = extractQuoteRegex.find(text)?.value ?: ""
+    private fun extractQuote(text: String) = EXTRACT_QUOTE_REGEX.find(text)?.value ?: ""
 
     /**
      * @return [text] with only the name (no commas for instance)
      */
-    private fun extractNameOnly(text: String) = AUTHOR_NAME_REGEX.find(text)?.value?.trim() ?: ""
+    private fun extractNameOnly(text: String) = AUTHOR_NAME_REGEX.find(text)?.value ?: ""
 }

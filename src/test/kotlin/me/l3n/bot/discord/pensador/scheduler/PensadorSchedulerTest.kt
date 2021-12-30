@@ -17,7 +17,7 @@ import javax.inject.Inject
 @QuarkusTest
 class PensadorSchedulerTest {
 
-    private val dummyAuthor = Author("http://image.l3n/fernando_person.png", "Fernando Person")
+    private val dummyAuthor = Author("Fernando Person", "http://image.l3n/fernando_person.png")
     private val dummyQuote = Quote(dummyAuthor, "O meu passado é tudo quanto não consegui ser.")
 
     private val service: DiscordService = mockk()

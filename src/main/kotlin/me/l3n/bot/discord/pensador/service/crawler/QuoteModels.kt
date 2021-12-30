@@ -6,8 +6,6 @@ data class Quote(
 )
 
 data class Author(
-    val imageUrl: String?,
     val name: String,
+    val imageUrl: String?,
 )
-
-val AUTHOR_NAME_REGEX = "^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ' ]+\$".toRegex()

@@ -1,71 +1,50 @@
 package me.l3n.bot.discord.pensador.service.crawler
 
-import io.ktor.client.*
-import io.ktor.client.request.*
+import io.quarkus.arc.DefaultBean
 import io.quarkus.arc.lookup.LookupIfProperty
+import kotlinx.coroutines.runBlocking
 import me.l3n.bot.discord.pensador.config.PensadorUrlConfig
 import org.jboss.logging.Logger
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import org.jsoup.select.Elements
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 
 @LookupIfProperty(name = "source", stringValue = "pensador")
+@DefaultBean
 @ApplicationScoped
 class PensadorCrawlerService(
-    private val httpClient: HttpClient,
     private val urlConfig: PensadorUrlConfig,
-) : CrawlerService {
+) : CrawlerService() {
 
     @Inject
     lateinit var log: Logger
 
-    override suspend fun crawlRandomQuote(): Quote {
-        val page = (0 until 20).random() + 1
-        val url = "${urlConfig.populares()}/$page"
+    override fun getMaxPageCount(): Int = 20
 
-        val html = httpClient.get<String>(url)
-        log.info("Fetched quote page")
+    override fun getPageUrl(page: Int): String = "${urlConfig.populares()}/$page"
 
-        log.debug("Parsing $url")
+    override fun extractQuotesHtml(rootHtml: Document): Elements =
+        rootHtml.getElementsByClass("thought-card")
 
-        val root = Jsoup.parse(html)
-        val quotes = root.getElementsByClass("thought-card")
+    override fun getQuoteContent(quoteHtml: Element): String =
+        quoteHtml.getElementsByTag("p").first()?.text() ?: throw IllegalAccessError("No text")
 
-        val randomIndex = (0 until quotes.count()).random()
-        val randomQuote = quotes[randomIndex]
-            ?: throw IllegalAccessError("No quote at $randomIndex of '$url'")
-
-        val authorElement = randomQuote
+    override fun getAuthorHtml(quoteHtml: Element): Element =
+        quoteHtml
             .getElementsByClass("autor").first()
-            ?.getElementsByTag("a")?.first() ?: throw IllegalAccessError("No author in '$url'")
+            ?.getElementsByTag("a")?.first() ?: throw IllegalAccessError("No author")
 
-        val authorBioURL = authorElement.attr("href")
-        val authorName = authorElement.text()
-        val imageUrl = getAuthorImageUrl(authorBioURL)
+    override fun getAuthorName(authorHtml: Element): String =
+        authorHtml.text()
 
-        val text = randomQuote
-            .getElementsByTag("p").first()?.text() ?: throw IllegalAccessError("No text in '$url'")
+    override fun getAuthorImageUrl(authorHtml: Element): String? {
+        val bioLink = authorHtml.attr("href")
+        val html = runBlocking { parseHtml("${urlConfig.base()}$bioLink") }
 
-        log.info("Parsed whole quote")
-
-        return Quote(
-            Author(imageUrl, authorName),
-            text,
-        )
-    }
-
-    /**
-     * @param bioLink is without the base URL
-     */
-    private suspend fun getAuthorImageUrl(bioLink: String): String? {
-        val html = httpClient.get<String>("${urlConfig.base()}$bioLink")
-
-        val root = Jsoup.parse(html)
-
-        val topHeader = root
-            .getImgFrom("top") ?: root
+        val topHeader = html
+            .getImgFrom("top") ?: html
             .getImgFrom("resumo") ?: return null
 
         return topHeader.attr("src")
