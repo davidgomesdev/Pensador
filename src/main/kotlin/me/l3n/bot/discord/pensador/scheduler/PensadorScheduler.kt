@@ -19,7 +19,7 @@ class PensadorScheduler(private val discord: DiscordService, private val crawler
     lateinit var log: Logger
 
     @Scheduled(cron = "{cron-expr}", concurrentExecution = SKIP)
-    fun crawl() = runBlocking {
+    fun sendRandomQuote() = runBlocking {
         val quote = async {
             log.debug("Crawling a quote")
 

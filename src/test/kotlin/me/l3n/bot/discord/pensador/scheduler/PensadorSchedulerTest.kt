@@ -37,7 +37,7 @@ class PensadorSchedulerTest {
         coEvery { crawler.crawlRandomQuote() }.returns(dummyQuote)
         coEvery { service.sendQuote(any()) }.returns(Unit)
 
-        runBlocking { scheduler.crawl() }
+        runBlocking { scheduler.sendRandomQuote() }
 
         coVerify(exactly = 1) { crawler.crawlRandomQuote() }
         coVerify(exactly = 1) { service.sendQuote(dummyQuote) }

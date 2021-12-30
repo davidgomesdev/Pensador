@@ -18,13 +18,13 @@ class KordProducer(private val config: DiscordConfiguration) {
     }
 
     @Produces
-    fun webhook(): Webhook = Webhook(
+    fun webhook(kord: Kord): Webhook = Webhook(
         WebhookData(
             config.webhook().id(),
             WebhookType.Incoming,
             channelId = config.channelId(),
             applicationId = config.appId(),
         ),
-        kord = kord()
+        kord = kord
     )
 }

@@ -1,20 +1,24 @@
 quarkus:
   log:
     level: ERROR
+    format: "%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c{1.1.1.1.1.3}] %s%e%n"
     category:
       "me.l3n.bot.discord":
         level: DEBUG
     file:
       enable: true
       path: logs/quarkus.log
+      format: ${quarkus.log.format}
       rotation:
         max-file-size: 10M
         max-backup-index: 5
         rotate-on-boot: true
+    console:
+      format: ${quarkus.log.format}
 
 cron-expr: "* 0 9,13,16,20 * * ? *"
 "%dev":
-  cron-expr: "*/15 * * * * ?"
+  cron-expr: "*/5 * * * * ?"
 
 url:
   goodreads-quotes: https://www.goodreads.com/quotes
