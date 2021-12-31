@@ -21,23 +21,23 @@ class PensadorCrawlerService(
 
     override fun getMaxPageCount(): Int = 20
 
-    override fun getPageUrl(page: Int): String = "${urlConfig.populares()}/$page"
+    override infix fun getPageUrl(page: Int): String = "${urlConfig.populares()}/$page"
 
-    override fun extractQuotesHtml(rootHtml: Document): Elements =
+    override infix fun extractQuotesHtml(rootHtml: Document): Elements =
         rootHtml.getElementsByClass("thought-card")
 
-    override fun getQuoteContent(quoteHtml: Element): String =
+    override infix fun getQuoteContent(quoteHtml: Element): String =
         quoteHtml.getElementsByTag("p").first()?.text() ?: throw IllegalAccessError("No text")
 
-    override fun getAuthorHtml(quoteHtml: Element): Element =
+    override infix fun getAuthorHtml(quoteHtml: Element): Element =
         quoteHtml
             .getElementsByClass("autor").first()
             ?.getElementsByTag("a")?.first() ?: throw IllegalAccessError("No author")
 
-    override fun getAuthorName(authorHtml: Element): String =
+    override infix fun getAuthorName(authorHtml: Element): String =
         authorHtml.text()
 
-    override fun getAuthorImageUrl(authorHtml: Element): String? {
+    override infix fun getAuthorImageUrl(authorHtml: Element): String? {
         val bioLink = authorHtml.attr("href")
         val html = runBlocking { parseHtml("${urlConfig.base()}$bioLink") }
 

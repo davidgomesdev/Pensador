@@ -16,7 +16,7 @@ abstract class CrawlerService {
     @Inject
     private lateinit var http: HttpClient
 
-    suspend fun crawlRandomQuote(): Quote {
+    open suspend fun crawlRandomQuote(): Quote {
         val page = getRandomPage()
         val pageUrl = getPageUrl(page)
         val pageHtml = parseHtml(pageUrl)
@@ -30,7 +30,7 @@ abstract class CrawlerService {
 
     protected abstract fun getMaxPageCount(): Int
 
-    suspend fun crawlQuotes(page: Int): Flow<Quote> {
+    open suspend infix fun crawlQuotes(page: Int): Flow<Quote> {
         val pageUrl = getPageUrl(page)
         val pageHtml = parseHtml(pageUrl)
 
@@ -40,17 +40,17 @@ abstract class CrawlerService {
             .map(::parseQuote)
     }
 
-    abstract fun getPageUrl(page: Int): String
+    abstract infix fun getPageUrl(page: Int): String
 
-    protected suspend fun parseHtml(url: String): Document {
+    protected open suspend infix fun parseHtml(url: String): Document {
         val html = http.get<String>(url)
 
         return Jsoup.parse(html)
     }
 
-    protected abstract fun extractQuotesHtml(rootHtml: Document): Elements
+    protected abstract infix fun extractQuotesHtml(rootHtml: Document): Elements
 
-    private fun parseQuote(quoteHtml: Element): Quote {
+    private infix fun parseQuote(quoteHtml: Element): Quote {
         val content = getQuoteContent(quoteHtml)
         val authorHtml = getAuthorHtml(quoteHtml)
         val authorName = getAuthorName(authorHtml)
@@ -59,11 +59,11 @@ abstract class CrawlerService {
         return Quote(Author(authorName, authorImageUrl), content)
     }
 
-    protected abstract fun getQuoteContent(quoteHtml: Element): String
+    protected abstract infix fun getQuoteContent(quoteHtml: Element): String
 
-    protected abstract fun getAuthorHtml(quoteHtml: Element): Element
+    protected abstract infix fun getAuthorHtml(quoteHtml: Element): Element
 
-    protected abstract fun getAuthorName(authorHtml: Element): String
+    protected abstract infix fun getAuthorName(authorHtml: Element): String
 
-    protected abstract fun getAuthorImageUrl(authorHtml: Element): String?
+    protected abstract infix fun getAuthorImageUrl(authorHtml: Element): String?
 }

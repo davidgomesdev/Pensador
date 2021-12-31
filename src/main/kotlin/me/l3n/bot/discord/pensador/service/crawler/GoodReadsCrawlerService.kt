@@ -22,29 +22,29 @@ class GoodReadsCrawlerService : CrawlerService() {
 
     override fun getMaxPageCount(): Int = 20
 
-    override fun getPageUrl(page: Int): String = "$quotesUrl?page=$page"
+    override infix fun getPageUrl(page: Int): String = "$quotesUrl?page=$page"
 
-    override fun extractQuotesHtml(rootHtml: Document): Elements =
+    override infix fun extractQuotesHtml(rootHtml: Document): Elements =
         rootHtml.getElementsByClass("quoteDetails")
 
-    override fun getQuoteContent(quoteHtml: Element): String =
+    override infix fun getQuoteContent(quoteHtml: Element): String =
         extractQuote(quoteHtml.getElementsByClass("quoteText").text())
 
-    override fun getAuthorHtml(quoteHtml: Element): Element =
+    override infix fun getAuthorHtml(quoteHtml: Element): Element =
         quoteHtml
 
-    override fun getAuthorName(authorHtml: Element): String =
+    override infix fun getAuthorName(authorHtml: Element): String =
         extractNameOnly(
             authorHtml
                 .getElementsByClass("authorOrTitle").first()?.text()
                 ?: throw IllegalAccessError("No author name")
         )
 
-    override fun getAuthorImageUrl(authorHtml: Element): String? =
+    override infix fun getAuthorImageUrl(authorHtml: Element): String? =
         authorHtml.getElementsByTag("img")
             .attr("src")
 
-    private fun extractQuote(text: String) = EXTRACT_QUOTE_REGEX.find(text)?.value ?: ""
+    private infix fun extractQuote(text: String) = EXTRACT_QUOTE_REGEX.find(text)?.value ?: ""
 
     /**
      * @return [text] with only the name (no commas for instance)
