@@ -5,6 +5,7 @@ import dev.kord.core.behavior.execute
 import dev.kord.core.entity.Webhook
 import dev.kord.core.event.gateway.DisconnectEvent
 import dev.kord.core.event.gateway.ReadyEvent
+import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.core.on
 import io.quarkus.runtime.Startup
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -27,7 +28,7 @@ const val NO_AUTHOR_IMAGE =
 @Startup
 @ApplicationScoped
 class DiscordService(
-    private val kord: Kord,
+    private val discord: Kord,
     private val webhook: Webhook,
     private val config: DiscordConfiguration,
 ) {
@@ -38,29 +39,29 @@ class DiscordService(
     @DelicateCoroutinesApi
     @PostConstruct
     fun startup() {
-        kord.on<ReadyEvent> {
+        discord.on<ReadyEvent> {
             log.info("Logged in!")
         }
 
         log.debug("Logging in...")
-        GlobalScope.launch(Unconfined) { kord.login() }
+        GlobalScope.launch(Unconfined) { discord.login() }
     }
 
     @DelicateCoroutinesApi
     @PreDestroy
     fun shutdown() {
-        kord.on<DisconnectEvent> {
+        discord.on<DisconnectEvent> {
             log.info("Logged out!")
         }
 
         log.debug("Logging out...")
-        GlobalScope.launch(Unconfined) { kord.logout() }
+        GlobalScope.launch(Unconfined) { discord.logout() }
     }
 
     suspend fun cleanupFreshQuotes() =
-        kord.getTextChannel(config.channelId()).messages.collect { msg -> msg.delete() }
+        discord.getTextChannel(config.channelId()).messages.collect { msg -> msg.delete() }
 
-    suspend fun sendMessageAs(message: Message) {
+    private suspend fun sendWebhookMessage(message: Message) {
         webhook.execute(config.webhook().token()) {
             avatarUrl = message.avatarUrl
             username = message.username
@@ -68,11 +69,16 @@ class DiscordService(
         }
     }
 
-    suspend fun sendQuote(quote: Quote) {
-        sendMessageAs(quote.toMessage())
+    suspend infix fun sendQuote(quote: Quote) {
+        if (!quote.isValid())
+            throw IllegalArgumentException("Quote not valid")
+
+        sendWebhookMessage(quote.toMessage())
     }
 }
 
 data class Message(val username: String, val avatarUrl: String, val text: String)
 
 fun Quote.toMessage() = Message(author.name, author.imageUrl ?: NO_AUTHOR_IMAGE, text)
+
+fun Quote.isValid() = text.length < 2_000
