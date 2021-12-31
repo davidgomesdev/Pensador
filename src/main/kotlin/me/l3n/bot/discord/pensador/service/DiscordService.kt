@@ -6,6 +6,7 @@ import dev.kord.core.entity.Webhook
 import dev.kord.core.event.gateway.DisconnectEvent
 import dev.kord.core.event.gateway.ReadyEvent
 import dev.kord.core.on
+import io.quarkus.runtime.Startup
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers.Unconfined
 import kotlinx.coroutines.GlobalScope
@@ -23,6 +24,7 @@ import javax.inject.Inject
 const val NO_AUTHOR_IMAGE =
     "https://thumbs.dreamstime.com/b/em-inc%C3%B3gnito-%C3%ADcone-equipe-cara-com-vidros-barba-e-chap%C3%A9u-suportes-da-foto-vetor-109640094.jpg"
 
+@Startup
 @ApplicationScoped
 class DiscordService(
     private val kord: Kord,
