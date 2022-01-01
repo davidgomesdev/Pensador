@@ -16,7 +16,7 @@ quarkus:
     console:
       format: ${quarkus.log.format}
 
-cron-expr: "* 0 9,13,16,20 * * ? *"
+cron-expr: "* 0 9,12,15,18,21 * * ? *"
 "%dev":
   cron-expr: "*/5 * * * * ?"
 
