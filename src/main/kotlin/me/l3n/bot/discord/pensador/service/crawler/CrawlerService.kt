@@ -16,7 +16,7 @@ abstract class CrawlerService {
     @Inject
     private lateinit var http: HttpClient
 
-    open suspend fun crawlRandomQuote(): Quote {
+    suspend fun crawlRandomQuote(): Quote {
         val page = getRandomPage()
         val pageUrl = getPageUrl(page)
         val pageHtml = parseHtml(pageUrl)
@@ -30,7 +30,7 @@ abstract class CrawlerService {
 
     protected abstract fun getMaxPageCount(): Int
 
-    open suspend infix fun crawlQuotes(page: Int): Flow<Quote> {
+    suspend infix fun crawlQuotes(page: Int): Flow<Quote> {
         val pageUrl = getPageUrl(page)
         val pageHtml = parseHtml(pageUrl)
 
@@ -42,7 +42,7 @@ abstract class CrawlerService {
 
     abstract infix fun getPageUrl(page: Int): String
 
-    protected open suspend infix fun parseHtml(url: String): Document {
+    protected suspend infix fun parseHtml(url: String): Document {
         val html = http.get<String>(url)
 
         return Jsoup.parse(html)

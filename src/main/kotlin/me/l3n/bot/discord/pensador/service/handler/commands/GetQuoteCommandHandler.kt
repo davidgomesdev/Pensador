@@ -18,7 +18,7 @@ class GetQuoteCommandHandler(private val crawler: CrawlerService) : CommandHandl
     override val name = "q"
 
     @Inject
-    lateinit var log: Logger
+    private lateinit var log: Logger
 
     override suspend fun handle(args: List<String>, message: Message): Result<Unit> {
         val author = message.author ?: return Result.failure(IllegalArgumentException("No author!"))

@@ -11,13 +11,12 @@ import javax.inject.Singleton
 
 
 @Singleton
-class CommandRouter {
+class CommandRouter(
+    private val handlers: Instance<CommandHandler>,
+) {
 
     @Inject
-    lateinit var log: Logger
-
-    @Inject
-    lateinit var handlers: Instance<CommandHandler>
+    private lateinit var log: Logger
 
     suspend infix fun routeMessage(message: Message): Result<Unit> {
         val content = message.content

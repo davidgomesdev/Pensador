@@ -8,11 +8,13 @@ import kotlinx.coroutines.runBlocking
 import me.l3n.bot.discord.pensador.config.DiscordConfiguration
 import javax.enterprise.context.ApplicationScoped
 import javax.enterprise.inject.Produces
+import javax.inject.Singleton
 
 @ApplicationScoped
-class KordProducer(private val config: DiscordConfiguration) {
+class DiscordProducer(private val config: DiscordConfiguration) {
 
     @Produces
+    @Singleton
     fun kord(): Kord = runBlocking {
         Kord(config.botToken())
     }

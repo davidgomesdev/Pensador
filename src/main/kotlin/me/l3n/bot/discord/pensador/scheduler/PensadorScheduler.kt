@@ -17,7 +17,7 @@ import javax.inject.Inject
 class PensadorScheduler(private val discord: DiscordService, private val crawler: CrawlerService) {
 
     @Inject
-    lateinit var log: Logger
+    private lateinit var log: Logger
 
     @Scheduled(cron = "{cron-expr}", concurrentExecution = SKIP)
     fun sendRandomQuote() = runBlocking {

@@ -3,21 +3,16 @@ package me.l3n.bot.discord.pensador.service.crawler
 import io.quarkus.arc.lookup.LookupIfProperty
 import kotlinx.coroutines.runBlocking
 import me.l3n.bot.discord.pensador.config.PensadorUrlConfig
-import org.jboss.logging.Logger
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import javax.enterprise.context.ApplicationScoped
-import javax.inject.Inject
 
 @LookupIfProperty(name = "source", stringValue = "pensador")
 @ApplicationScoped
 class PensadorCrawlerService(
     private val urlConfig: PensadorUrlConfig,
 ) : CrawlerService() {
-
-    @Inject
-    lateinit var log: Logger
 
     override fun getMaxPageCount(): Int = 20
 
@@ -41,14 +36,12 @@ class PensadorCrawlerService(
         val bioLink = authorHtml.attr("href")
         val html = runBlocking { parseHtml("${urlConfig.base()}$bioLink") }
 
-        val topHeader = html
-            .getImgFrom("top") ?: html
-            .getImgFrom("resumo") ?: return null
+        val topHeader = html getImgFrom "top" ?: html getImgFrom "resumo" ?: return null
 
         return topHeader.attr("src")
     }
 }
 
-private fun Document.getImgFrom(className: String): Element? =
+private infix fun Document.getImgFrom(className: String): Element? =
     getElementsByClass(className).firstOrNull()
         ?.getElementsByTag("img")?.firstOrNull()
