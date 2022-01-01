@@ -2,6 +2,7 @@ package me.l3n.bot.discord.pensador.service
 
 import dev.kord.core.Kord
 import dev.kord.core.behavior.execute
+import dev.kord.core.behavior.reply
 import dev.kord.core.entity.Webhook
 import dev.kord.core.event.gateway.DisconnectEvent
 import dev.kord.core.event.gateway.ReadyEvent
@@ -14,6 +15,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import me.l3n.bot.discord.pensador.config.DiscordConfiguration
 import me.l3n.bot.discord.pensador.service.crawler.Quote
+import me.l3n.bot.discord.pensador.service.router.CommandRouter
 import me.l3n.bot.discord.pensador.util.getTextChannel
 import org.jboss.logging.Logger
 import javax.annotation.PostConstruct
@@ -31,6 +33,7 @@ class DiscordService(
     private val discord: Kord,
     private val webhook: Webhook,
     private val config: DiscordConfiguration,
+    private val commandRouter: CommandRouter,
 ) {
 
     @Inject
@@ -41,6 +44,41 @@ class DiscordService(
     fun startup() {
         discord.on<ReadyEvent> {
             log.info("Logged in!")
+        }
+
+        discord.on<MessageCreateEvent> {
+            if (this.getGuild() != null) return@on
+
+            val author = message.author ?: return@on
+
+            if (author == discord.getSelf()) return@on
+
+            val username = author.username
+
+            log.debug("Got DM message from '$username'")
+
+            val dmChannel = author.getDmChannelOrNull()
+
+            if (dmChannel == null)
+                log.debug("Not allowed to reply")
+            else {
+                val result = commandRouter routeMessage message
+
+                if (result.isSuccess) {
+                    log.info("Command of '$username' routed successfully")
+                } else {
+                    val error = result.exceptionOrNull() ?: return@on
+                    val response = when (error) {
+                        is IllegalArgumentException -> """Command not found :frowning2:"""
+                        is IllegalStateException -> "Command not working! :worried:"
+                        else -> "Internal error :confused:"
+                    }
+
+                    message.reply {
+                        content = response
+                    }
+                }
+            }
         }
 
         log.debug("Logging in...")
@@ -61,24 +99,13 @@ class DiscordService(
     suspend fun cleanupFreshQuotes() =
         discord.getTextChannel(config.channelId()).messages.collect { msg -> msg.delete() }
 
-    private suspend fun sendWebhookMessage(message: Message) {
+    suspend infix fun sendQuote(quote: Quote) {
         webhook.execute(config.webhook().token()) {
-            avatarUrl = message.avatarUrl
-            username = message.username
-            content = message.text
+            avatarUrl = quote.author.imageUrl ?: NO_AUTHOR_IMAGE
+            username = quote.author.name
+            content = quote.text
         }
     }
-
-    suspend infix fun sendQuote(quote: Quote) {
-        if (!quote.isValid())
-            throw IllegalArgumentException("Quote not valid")
-
-        sendWebhookMessage(quote.toMessage())
-    }
 }
-
-data class Message(val username: String, val avatarUrl: String, val text: String)
-
-fun Quote.toMessage() = Message(author.name, author.imageUrl ?: NO_AUTHOR_IMAGE, text)
 
 fun Quote.isValid() = text.length < 2_000
