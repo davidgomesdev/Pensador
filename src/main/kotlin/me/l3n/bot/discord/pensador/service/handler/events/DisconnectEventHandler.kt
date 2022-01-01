@@ -3,11 +3,11 @@ package me.l3n.bot.discord.pensador.service.handler.events
 import dev.kord.core.event.gateway.DisconnectEvent
 import me.l3n.bot.discord.pensador.service.handler.EventHandler
 import org.jboss.logging.Logger
-import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
+import javax.inject.Singleton
 
 
-@ApplicationScoped
+@Singleton
 class DisconnectEventHandler : EventHandler<DisconnectEvent>() {
 
     override val type = DisconnectEvent::class

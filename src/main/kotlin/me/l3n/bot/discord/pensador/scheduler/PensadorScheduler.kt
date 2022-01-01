@@ -10,14 +10,14 @@ import me.l3n.bot.discord.pensador.service.crawler.CrawlerService
 import me.l3n.bot.discord.pensador.service.isValid
 import org.jboss.logging.Logger
 import javax.enterprise.context.ApplicationScoped
-import javax.inject.Inject
 
 
 @ApplicationScoped
-class PensadorScheduler(private val discord: DiscordService, private val crawler: CrawlerService) {
-
-    @Inject
-    private lateinit var log: Logger
+class PensadorScheduler(
+    private val discord: DiscordService,
+    private val crawler: CrawlerService,
+    private val log: Logger,
+) {
 
     @Scheduled(cron = "{cron-expr}", concurrentExecution = SKIP)
     fun sendRandomQuote() = runBlocking {

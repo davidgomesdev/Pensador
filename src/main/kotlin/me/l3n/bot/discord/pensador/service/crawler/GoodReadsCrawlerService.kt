@@ -6,7 +6,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
-import javax.enterprise.context.ApplicationScoped
+import javax.inject.Singleton
 
 
 private val EXTRACT_QUOTE_REGEX = "(?<=“)(.*?)(?=”)".toRegex()
@@ -14,7 +14,7 @@ private val AUTHOR_NAME_REGEX = "^[A-Za-záàâãéèêíïóôõöúçñÁÀÂ�
 
 @LookupIfProperty(name = "source", stringValue = "goodreads", lookupIfMissing = true)
 @DefaultBean
-@ApplicationScoped
+@Singleton
 class GoodReadsCrawlerService : CrawlerService() {
 
     @ConfigProperty(name = "url.goodreads-quotes")

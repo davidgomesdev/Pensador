@@ -6,10 +6,11 @@ import dev.kord.core.event.message.MessageCreateEvent
 import me.l3n.bot.discord.pensador.service.handler.EventHandler
 import me.l3n.bot.discord.pensador.service.router.CommandRouter
 import org.jboss.logging.Logger
-import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
+import javax.inject.Singleton
 
-@ApplicationScoped
+
+@Singleton
 class MessageCreateEventHandler(
     private val discord: Kord,
     private val commandRouter: CommandRouter,

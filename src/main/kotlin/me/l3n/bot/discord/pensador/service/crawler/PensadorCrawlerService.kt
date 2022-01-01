@@ -6,10 +6,10 @@ import me.l3n.bot.discord.pensador.config.PensadorUrlConfig
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
-import javax.enterprise.context.ApplicationScoped
+import javax.inject.Singleton
 
 @LookupIfProperty(name = "source", stringValue = "pensador")
-@ApplicationScoped
+@Singleton
 class PensadorCrawlerService(
     private val urlConfig: PensadorUrlConfig,
 ) : CrawlerService() {
