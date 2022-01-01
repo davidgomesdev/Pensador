@@ -1,20 +1,19 @@
 quarkus:
   log:
     level: ERROR
-    format: "%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c{1.1.1.1.1.3}] %s%e%n"
     category:
       "me.l3n.bot.discord":
         level: DEBUG
     file:
       enable: true
       path: logs/quarkus.log
-      format: ${quarkus.log.format}
+      format: "%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c{1.1.1.1.1.3}] %s%e%n"
       rotation:
         max-file-size: 10M
         max-backup-index: 5
         rotate-on-boot: true
     console:
-      format: ${quarkus.log.format}
+      format: "%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c{1.1.1.1.1.3}] %s%e%n"
 
 cron-expr: "* 0 9,12,15,18,21 * * ? *"
 "%dev":
