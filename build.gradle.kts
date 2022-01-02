@@ -28,6 +28,7 @@ dependencies {
 
     // Discord
     implementation("dev.kord:kord-core:0.7.4")
+    implementation("dev.kord.x:emoji:0.5.0")
 
     // HTTP
     implementation("io.ktor:ktor-client-core:1.6.5")

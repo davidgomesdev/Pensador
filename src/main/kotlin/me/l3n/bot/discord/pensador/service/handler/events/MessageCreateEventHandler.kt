@@ -3,6 +3,7 @@ package me.l3n.bot.discord.pensador.service.handler.events
 import dev.kord.core.Kord
 import dev.kord.core.behavior.reply
 import dev.kord.core.event.message.MessageCreateEvent
+import dev.kord.x.emoji.Emojis
 import me.l3n.bot.discord.pensador.service.handler.EventHandler
 import me.l3n.bot.discord.pensador.service.router.CommandRouter
 import org.jboss.logging.Logger
@@ -44,9 +45,9 @@ class MessageCreateEventHandler(
             } else {
                 val error = result.exceptionOrNull() ?: return@handler
                 val response = when (error) {
-                    is IllegalArgumentException -> "Command not found :frowning2:"
-                    is IllegalStateException -> "Command not working! :worried:"
-                    else -> "Internal error :confused:"
+                    is IllegalArgumentException -> "Command not found ${Emojis.frowning2}"
+                    is IllegalStateException -> "Command not working! ${Emojis.worried}"
+                    else -> "Internal error ${Emojis.confused}"
                 }
 
                 message.reply {

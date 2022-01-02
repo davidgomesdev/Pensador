@@ -41,7 +41,8 @@ class CommandRouter(
             log.error("Command '$commandName' failed with args '${args.joinToString()}'",
                 replyMessage.exceptionOrNull())
 
-            return Result.failure(ex ?: IllegalStateException("Command '$commandName' failed without exception"))
+            return Result
+                .failure(ex ?: IllegalStateException("Command '$commandName' failed without exception"))
         }
 
         return Result.success()

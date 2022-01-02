@@ -2,6 +2,7 @@ package me.l3n.bot.discord.pensador.service.handler.commands
 
 import dev.kord.core.behavior.reply
 import dev.kord.core.entity.Message
+import dev.kord.x.emoji.Emojis
 import me.l3n.bot.discord.pensador.service.crawler.CrawlerService
 import me.l3n.bot.discord.pensador.service.handler.CommandHandler
 import me.l3n.bot.discord.pensador.service.isValid
@@ -22,7 +23,7 @@ class GetQuoteCommandHandler(private val crawler: CrawlerService) : CommandHandl
 
     override suspend fun handle(args: List<String>, message: Message): Result<Unit> {
         val author = message.author ?: return Result.failure(IllegalArgumentException("No author!"))
-        val searchingMessage = message.reply { content = "Searching... :mag:" }
+        val searchingMessage = message.reply { content = "Searching... ${Emojis.mag}" }
 
         log.debug("Crawling quote for '${author.username}'")
 
@@ -52,7 +53,7 @@ class GetQuoteCommandHandler(private val crawler: CrawlerService) : CommandHandl
 
         message.reply {
             if (quote == null)
-                content = "Couldn't find a valid quote! :weary:"
+                content = "Couldn't find a valid quote! ${Emojis.weary}"
             else {
                 val quoteAuthor = quote.author
 
