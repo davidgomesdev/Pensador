@@ -74,4 +74,4 @@ class DiscordService(
 
 fun String.escapeForDiscord() = replace(ESCAPE_SYMBOLS_REGEX, "\\\\$1")
 
-fun Quote.isValid() = text.escapeForDiscord().trim().length < 2_000
+fun Quote.isValid() = text.escapeForDiscord().trim().length < 2_000 && author.name.length < 80
