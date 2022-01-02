@@ -67,7 +67,7 @@ class DiscordService(
         webhook.execute(config.webhook().token()) {
             avatarUrl = quote.author.imageUrl ?: botConfig.noImageUrl()
             username = quote.author.name
-            content = quote.text.escapeForDiscord()
+            content = quote.text.escapeForDiscord().trim()
         }
     }
 }
