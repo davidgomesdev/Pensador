@@ -22,6 +22,7 @@ class GetQuoteCommandHandler(private val crawler: CrawlerService) : CommandHandl
 
     override suspend fun handle(args: List<String>, message: Message): Result<Unit> {
         val author = message.author ?: return Result.failure(IllegalArgumentException("No author!"))
+        val searchingMessage = message.reply { content = "Searching... :mag:" }
 
         log.debug("Crawling quote for '${author.username}'")
 
@@ -45,6 +46,8 @@ class GetQuoteCommandHandler(private val crawler: CrawlerService) : CommandHandl
             log.warn("Retry for crawling a valid quote exceeded")
             null
         }
+
+        searchingMessage.delete()
 
         message.reply {
             if (quote == null)

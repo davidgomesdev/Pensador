@@ -44,7 +44,7 @@ class MessageCreateEventHandler(
             } else {
                 val error = result.exceptionOrNull() ?: return@handler
                 val response = when (error) {
-                    is IllegalArgumentException -> """Command not found :frowning2:"""
+                    is IllegalArgumentException -> "Command not found :frowning2:"
                     is IllegalStateException -> "Command not working! :worried:"
                     else -> "Internal error :confused:"
                 }
