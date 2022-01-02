@@ -3,9 +3,9 @@ package me.l3n.bot.discord.pensador.service.handler.commands
 import dev.kord.core.behavior.reply
 import dev.kord.core.entity.Message
 import me.l3n.bot.discord.pensador.service.crawler.CrawlerService
-import me.l3n.bot.discord.pensador.service.crawler.Quote
 import me.l3n.bot.discord.pensador.service.handler.CommandHandler
 import me.l3n.bot.discord.pensador.service.isValid
+import me.l3n.bot.discord.pensador.util.coRetry
 import me.l3n.bot.discord.pensador.util.success
 import org.jboss.logging.Logger
 import javax.enterprise.context.ApplicationScoped
@@ -26,26 +26,27 @@ class GetQuoteCommandHandler(private val crawler: CrawlerService) : CommandHandl
 
         log.debug("Crawling quote for '${author.username}'")
 
-        val quote: Quote? = run {
-            for (i in 0..5) {
-                if (i != 0)
-                    log.debug("Retrying crawling a valid quote (#$i)")
-
+        val quote = coRetry(
+            5,
+            block = {
                 log.debug("Crawling a quote")
 
                 val result = crawler.crawlRandomQuote()
                 log.info("Crawled a random quote")
 
-                if (result.isValid()) return@run result
-
-                log.debug("Quote not valid")
-
-                continue
-            }
-
-            log.warn("Retry for crawling a valid quote exceeded")
-            null
-        }
+                if (result.isValid()) Result.success(result)
+                else {
+                    Result.failure(IllegalArgumentException("Quote not valid"))
+                }
+            },
+            beforeRetry = { i ->
+                log.debug("Retrying crawling a valid quote (#$i)")
+            },
+            afterRetry = { error -> log.debug(error.message) },
+            retryExceeded = {
+                log.warn("Retry for crawling a valid quote exceeded")
+            },
+        ).getOrNull()
 
         searchingMessage.delete()
 
