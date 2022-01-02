@@ -19,6 +19,9 @@ cron-expr: "* 0 9,12,15,18,21 * * ? *"
 "%dev":
   cron-expr: "*/5 * * * * ?"
 
+bot:
+  no-image-url: "https://thumbs.dreamstime.com/b/em-inc%C3%B3gnito-%C3%ADcone-equipe-cara-com-vidros-barba-e-chap%C3%A9u-suportes-da-foto-vetor-109640094.jpg"
+
 url:
   goodreads-quotes: https://www.goodreads.com/quotes
   pensador:

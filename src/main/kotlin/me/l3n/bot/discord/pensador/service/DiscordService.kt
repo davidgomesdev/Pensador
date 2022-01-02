@@ -9,6 +9,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers.Unconfined
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import me.l3n.bot.discord.pensador.config.BotConfiguration
 import me.l3n.bot.discord.pensador.config.DiscordConfiguration
 import me.l3n.bot.discord.pensador.service.crawler.Quote
 import me.l3n.bot.discord.pensador.service.handler.EventHandler
@@ -21,17 +22,14 @@ import javax.enterprise.inject.Instance
 import javax.inject.Inject
 
 
-const val NO_AUTHOR_IMAGE =
-    "https://thumbs.dreamstime.com/b/em-inc%C3%B3gnito-%C3%ADcone-equipe-cara-com-vidros-barba-e-chap%C3%A9u-suportes-da-foto-vetor-109640094.jpg"
-
 @Startup
 @ApplicationScoped
 class DiscordService(
     private val discord: Kord,
     private val webhook: Webhook,
     private val config: DiscordConfiguration,
-
-    ) {
+    private val botConfig: BotConfiguration,
+) {
 
     @Inject
     private lateinit var log: Logger
@@ -65,7 +63,7 @@ class DiscordService(
 
     suspend infix fun sendQuote(quote: Quote) {
         webhook.execute(config.webhook().token()) {
-            avatarUrl = quote.author.imageUrl ?: NO_AUTHOR_IMAGE
+            avatarUrl = quote.author.imageUrl ?: botConfig.noImageUrl()
             username = quote.author.name
             content = quote.text
         }
