@@ -22,6 +22,8 @@ import javax.enterprise.inject.Instance
 import javax.inject.Inject
 
 
+val ESCAPE_SYMBOLS_REGEX = "([^\\p{L}\\d\\s@#])".toRegex()
+
 @Startup
 @ApplicationScoped
 class DiscordService(
@@ -65,9 +67,11 @@ class DiscordService(
         webhook.execute(config.webhook().token()) {
             avatarUrl = quote.author.imageUrl ?: botConfig.noImageUrl()
             username = quote.author.name
-            content = quote.text
+            content = quote.text.escapeForDiscord()
         }
     }
 }
+
+fun String.escapeForDiscord() = replace(ESCAPE_SYMBOLS_REGEX, "\\\\$1")
 
 fun Quote.isValid() = text.length < 2_000
