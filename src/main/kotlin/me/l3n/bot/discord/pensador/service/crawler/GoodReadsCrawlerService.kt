@@ -1,6 +1,7 @@
 package me.l3n.bot.discord.pensador.service.crawler
 
 import io.quarkus.arc.lookup.LookupIfProperty
+import me.l3n.bot.discord.pensador.util.toPlainText
 import org.eclipse.microprofile.config.inject.ConfigProperty
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -8,7 +9,7 @@ import org.jsoup.select.Elements
 import javax.inject.Singleton
 
 
-private val EXTRACT_QUOTE_REGEX = "(?<=“)(.*?)(?=”)".toRegex()
+private val EXTRACT_QUOTE_REGEX = "(?<=“)(.*?)(?=”)".toRegex(RegexOption.DOT_MATCHES_ALL)
 private val AUTHOR_NAME_REGEX = "^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ' ]+\$".toRegex()
 
 @LookupIfProperty(name = "source", stringValue = "goodreads", lookupIfMissing = true)
@@ -26,7 +27,8 @@ class GoodReadsCrawlerService : CrawlerService() {
         rootHtml.getElementsByClass("quoteDetails")
 
     override infix fun getQuoteContent(quoteHtml: Element): String =
-        extractQuote(quoteHtml.getElementsByClass("quoteText").text())
+        extractQuote(quoteHtml.getElementsByClass("quoteText").first()?.toPlainText()
+            ?: throw IllegalArgumentException("No quote text"))
 
     override infix fun getAuthorHtml(quoteHtml: Element): Element =
         quoteHtml

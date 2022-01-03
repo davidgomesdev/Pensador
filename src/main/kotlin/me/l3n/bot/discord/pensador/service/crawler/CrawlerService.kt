@@ -11,6 +11,7 @@ import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import javax.inject.Inject
 
+
 abstract class CrawlerService {
 
     @Inject
@@ -21,9 +22,9 @@ abstract class CrawlerService {
         val pageUrl = getPageUrl(page)
         val pageHtml = parseHtml(pageUrl)
 
-        val quoteHtml = extractQuotesHtml(pageHtml)[getRandomPage()]
+        val quotesHtml = extractQuotesHtml(pageHtml)
 
-        return parseQuote(quoteHtml)
+        return parseQuote(quotesHtml.random())
     }
 
     private fun getRandomPage() = (0 until getMaxPageCount()).random() + 1

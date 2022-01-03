@@ -3,6 +3,7 @@ package me.l3n.bot.discord.pensador.service.crawler
 import io.quarkus.arc.lookup.LookupIfProperty
 import kotlinx.coroutines.runBlocking
 import me.l3n.bot.discord.pensador.config.PensadorUrlConfig
+import me.l3n.bot.discord.pensador.util.toPlainText
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
@@ -22,7 +23,7 @@ class PensadorCrawlerService(
         rootHtml.getElementsByClass("thought-card")
 
     override infix fun getQuoteContent(quoteHtml: Element): String =
-        quoteHtml.getElementsByTag("p").first()?.text() ?: throw IllegalAccessError("No text")
+        quoteHtml.getElementsByTag("p").first()?.toPlainText() ?: throw IllegalAccessError("No text")
 
     override infix fun getAuthorHtml(quoteHtml: Element): Element =
         quoteHtml
