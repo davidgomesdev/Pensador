@@ -54,7 +54,7 @@ abstract class CrawlerService {
     private infix fun parseQuote(quoteHtml: Element): Quote {
         val content = getQuoteContent(quoteHtml)
         val authorHtml = getAuthorHtml(quoteHtml)
-        val authorName = getAuthorName(authorHtml)
+        val authorName = getAuthorName(authorHtml).trim()
         val authorImageUrl = getAuthorImageUrl(authorHtml)
 
         return Quote(Author(authorName, authorImageUrl), content)

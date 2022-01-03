@@ -10,7 +10,7 @@ import javax.inject.Singleton
 
 
 private val EXTRACT_QUOTE_REGEX = "(?<=“)(.*?)(?=”)".toRegex(RegexOption.DOT_MATCHES_ALL)
-private val AUTHOR_NAME_REGEX = "^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ' ]+\$".toRegex()
+private val AUTHOR_NAME_REPLACE_REGEX = "[^A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ' .,]+|,\$".toRegex()
 
 @LookupIfProperty(name = "source", stringValue = "goodreads", lookupIfMissing = true)
 @Singleton
@@ -33,12 +33,11 @@ class GoodReadsCrawlerService : CrawlerService() {
     override infix fun getAuthorHtml(quoteHtml: Element): Element =
         quoteHtml
 
-    override infix fun getAuthorName(authorHtml: Element): String =
-        extractNameOnly(
-            authorHtml
-                .getElementsByClass("authorOrTitle").first()?.text()
-                ?: throw IllegalAccessError("No author name")
-        )
+    override infix fun getAuthorName(authorHtml: Element): String {
+        val nameHtml = authorHtml.select("span.authorOrTitle").first() ?: return ""
+
+        return extractNameOnly(nameHtml.wholeText().trim())
+    }
 
     override infix fun getAuthorImageUrl(authorHtml: Element): String? =
         authorHtml.getElementsByTag("img")
@@ -49,5 +48,5 @@ class GoodReadsCrawlerService : CrawlerService() {
     /**
      * @return [text] with only the name (no commas for instance)
      */
-    private fun extractNameOnly(text: String) = AUTHOR_NAME_REGEX.find(text)?.value ?: ""
+    private fun extractNameOnly(text: String) = AUTHOR_NAME_REPLACE_REGEX.replace(text, "")
 }
