@@ -10,11 +10,17 @@ import me.l3n.bot.discord.pensador.util.coRetry
 import me.l3n.bot.discord.pensador.util.success
 import org.jboss.logging.Logger
 import javax.enterprise.context.ApplicationScoped
+import javax.enterprise.inject.Instance
 import javax.inject.Inject
 
 
 @ApplicationScoped
-class GetQuoteCommandHandler(private val crawler: CrawlerService) : CommandHandler() {
+class GetQuoteCommandHandler(
+    crawlerInstance: Instance<CrawlerService>,
+) : CommandHandler() {
+
+    private val crawler: CrawlerService =
+        crawlerInstance.get() ?: throw IllegalArgumentException("Invalid source specified in config")
 
     override val name = "q"
 

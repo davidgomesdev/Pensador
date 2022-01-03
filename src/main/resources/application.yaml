@@ -27,5 +27,3 @@ url:
   pensador:
     base: https://www.pensador.com
     populares: ${url.pensador.base}/populares
-
-source: pensador

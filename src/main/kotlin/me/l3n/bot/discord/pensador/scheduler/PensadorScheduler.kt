@@ -11,14 +11,18 @@ import me.l3n.bot.discord.pensador.service.isValid
 import me.l3n.bot.discord.pensador.util.coRetry
 import org.jboss.logging.Logger
 import javax.enterprise.context.ApplicationScoped
+import javax.enterprise.inject.Instance
 
 
 @ApplicationScoped
 class PensadorScheduler(
     private val discord: DiscordService,
-    private val crawler: CrawlerService,
+    crawlerInstance: Instance<CrawlerService>,
     private val log: Logger,
 ) {
+
+    private val crawler: CrawlerService =
+        crawlerInstance.get() ?: throw IllegalArgumentException("Invalid source specified in config")
 
     @Scheduled(cron = "{cron-expr}", concurrentExecution = SKIP)
     fun sendRandomQuote() = runBlocking {
