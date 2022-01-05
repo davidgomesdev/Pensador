@@ -22,7 +22,7 @@ import javax.enterprise.inject.Instance
 import javax.inject.Inject
 
 
-val ESCAPE_SYMBOLS_REGEX = "([^\\p{L}\\d\\s@#])".toRegex()
+val ESCAPE_DISCORD_REGEX = "([*_~`>|])".toRegex()
 
 @Startup
 @ApplicationScoped
@@ -72,6 +72,6 @@ class DiscordService(
     }
 }
 
-fun String.escapeForDiscord() = replace(ESCAPE_SYMBOLS_REGEX, "\\\\$1")
+fun String.escapeForDiscord(): String = replace(ESCAPE_DISCORD_REGEX, "\\\\$1")
 
 fun Quote.isValid() = text.escapeForDiscord().trim().length < 2_000 && author.name.length < 80
