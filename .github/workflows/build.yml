@@ -8,7 +8,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -18,7 +17,16 @@ jobs:
       with:
         java-version: '11'
         distribution: 'adopt'
-    - name: Build Quarkus with Gradle
+    - name: Validate tests
       uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
       with:
-        arguments: "clean test quarkusBuild"
+        arguments: "test quarkusBuild"
+    - name: Build Quarkus
+      uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
+      with:
+        arguments: "test quarkusBuild"
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2.3.1
+      with:
+        name: quarkusPackage
+        path: build/quarkus-app
