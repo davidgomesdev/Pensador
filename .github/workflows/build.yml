@@ -20,13 +20,14 @@ jobs:
     - name: Validate tests
       uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
       with:
-        arguments: "test quarkusBuild"
+        arguments: "test"
     - name: Build Quarkus
       uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
       with:
-        arguments: "test quarkusBuild"
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v2.3.1
+        arguments: "quarkusBuild"
+    - name: Archive build
+      uses: thedoctor0/zip-release@master
       with:
         name: quarkusPackage
-        path: build/quarkus-app
+        directory: build/quarkus-app
+    
