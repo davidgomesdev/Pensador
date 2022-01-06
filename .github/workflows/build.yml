@@ -28,6 +28,10 @@ jobs:
     - name: Archive build
       uses: thedoctor0/zip-release@master
       with:
-        name: quarkusPackage
+        filename: quarkusPackage
         directory: build/quarkus-app
-    
+    - name: Upload archive
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: "quarkusPackage.zip"
+        token: ${{ secrets.GITHUB_TOKEN }}
