@@ -32,7 +32,7 @@ Note: remember to have `config/application.yaml` in the folder you're running.
 
 ### Quotes source
 
-The bot has 2 possible sources it gets the quotes from, [goodreads](https://goodreads.com) (default) and [Pensador](https://www.pensador.com).
+The bot has 2 possible sources it gets the quotes from: [goodreads](https://goodreads.com) (default) and [Pensador](https://www.pensador.com).
 
 You can choose which one by specifying the `source` in the yaml. (`goodreads` or `pensador`)
 
