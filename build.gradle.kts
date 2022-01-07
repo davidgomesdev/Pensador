@@ -46,7 +46,7 @@ dependencies {
 }
 
 group = "me.l3n.bot.discord.pensador"
-version = "1.0.0-SNAPSHOT"
+version = "0.0.1"
 
 tasks.quarkusDev {
     workingDir = rootProject.projectDir.toString()
