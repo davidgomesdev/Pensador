@@ -29,11 +29,12 @@ jobs:
       uses: thedoctor0/zip-release@master
       with:
         filename: quarkusPackage.zip
-        directory: build/quarkus-app
+        path: build/quarkus-app
     - name: Upload archive
       uses: ncipollo/release-action@v1
       with:
         artifacts: "quarkusPackage.zip"
         token: ${{ secrets.GITHUB_TOKEN }}
         prerelease: true
+        name: latest
         tag: latest
