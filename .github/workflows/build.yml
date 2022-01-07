@@ -36,6 +36,6 @@ jobs:
         artifacts: "quarkusPackage.zip"
         token: ${{ secrets.GITHUB_TOKEN }}
         prerelease: true
-        removeArtifacts: true
+        allowUpdates: true
         name: latest
         tag: latest
