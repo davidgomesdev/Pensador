@@ -37,5 +37,6 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         prerelease: true
         allowUpdates: true
+        removeArtifacts: true
         name: latest
         tag: latest
