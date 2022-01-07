@@ -38,5 +38,6 @@ jobs:
         allowUpdates: true
         removeArtifacts: true
         artifactErrorsFailBuild: true
+        prerelease: true
         name: latest
         tag: latest
