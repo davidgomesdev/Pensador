@@ -36,4 +36,3 @@ jobs:
         artifacts: "quarkusPackage.zip"
         token: ${{ secrets.GITHUB_TOKEN }}
         name: latest
-        commit: main
