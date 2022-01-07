@@ -28,12 +28,12 @@ jobs:
     - name: Archive build
       uses: thedoctor0/zip-release@master
       with:
-        filename: quarkusPackage
+        filename: quarkusPackage.zip
         directory: build/quarkus-app
     - name: Upload archive
       uses: ncipollo/release-action@v1
       with:
         artifacts: "quarkusPackage.zip"
         token: ${{ secrets.GITHUB_TOKEN }}
-        tag: latest
+        name: latest
         commit: main
