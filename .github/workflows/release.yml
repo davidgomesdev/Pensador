@@ -26,11 +26,11 @@ jobs:
         filename: quarkusPackage.zip
         directory: build/quarkus-app
 
-    - name: Build Native Quarkus
+    - name: Build Native ARM64 Quarkus
       uses: uraimo/run-on-arch-action@v2.1.1
       with:
-        arch: aarch64
-        distro: ubuntu18.04
+        arch: armv7
+        distro: ubuntu20.04
         githubToken: ${{ secrets.GITHUB_TOKEN }}
         install: |
           apt-get -q update -y
@@ -43,7 +43,6 @@ jobs:
           export GRAALVM_FOLDER=/root/graalvm-ce-java11-21.3.0
           export PATH=$GRAALVM_FOLDER/bin:$PATH
           export JAVA_HOME=$GRAALVM_FOLDER
-          rm -fr ~/.gradle/caches ~/.gradle/daemon
           ./gradlew build -Dquarkus.package.type=native
     - name: Upload archive
       uses: ncipollo/release-action@v1.8.10
