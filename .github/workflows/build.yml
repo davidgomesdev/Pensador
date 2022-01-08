@@ -1,4 +1,4 @@
-name: Quarkus build
+name: Publish Quarkus package
 
 on:
   push:
