@@ -42,7 +42,7 @@ jobs:
           export PATH=$GRAALVM_FOLDER/bin:$PATH
           export JAVA_HOME=$GRAALVM_FOLDER
           gu install native-image
-          apt-get install build-essential libz-dev zlib1g-dev
+          apt-get install -y -q build-essential libz-dev zlib1g-dev
         run: |
           java -version
           ./gradlew build -Dquarkus.package.type=native
