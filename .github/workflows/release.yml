@@ -30,7 +30,7 @@ jobs:
     - name: Build Native Quarkus
       uses: uraimo/run-on-arch-action@v2.1.1
       with:
-        arch: armv7
+        arch: aarch64
         distro: ubuntu18.04
         githubToken: ${{ secrets.GITHUB_TOKEN }}
         run: |
