@@ -1,7 +1,8 @@
 name: Build Quarkus
 
 on:
-  push_request:
+  pull_request:
+    branches: [ main ]
   
 jobs:
   build:
