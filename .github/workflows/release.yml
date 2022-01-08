@@ -3,6 +3,8 @@ name: Release Quarkus package
 on:
   push:
     branches: [ main ]
+  # TODO: remove, it's just to test
+  pull_request:
   
 jobs:
   build:
