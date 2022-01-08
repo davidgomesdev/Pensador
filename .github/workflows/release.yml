@@ -34,8 +34,9 @@ jobs:
     - name: Build Native Quarkus
       uses: uraimo/run-on-arch-action@v2.1.0
       with:
+        githubToken: ${{ secrets.GITHUB_TOKEN }}
         arch: armv7
-        distro: ghcr.io/graalvm/graalvm-ce:java11-21.2.0
+        distro: graalvm/graalvm-ce:java11-21.2.0
         run: "./gradlew build -Dquarkus.package.type=native"
     - name: Upload archive
       uses: ncipollo/release-action@v1.8.10
