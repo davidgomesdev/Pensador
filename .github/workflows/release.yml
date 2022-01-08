@@ -8,7 +8,7 @@ on:
   
 jobs:
   release:
-    runs-on: graalvm/graalvm-ce:java11-21.2.0
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
@@ -28,7 +28,19 @@ jobs:
         directory: build/quarkus-app
 
     - name: Build Native Quarkus
-      run: "./gradlew build -Dquarkus.package.type=native"
+      uses: uraimo/run-on-arch-action@v2
+      with:
+        arch: armv7
+        distro: ubuntu18.04
+        githubToken: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          wget https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.3.0/graalvm-ce-java11-linux-aarch64-21.3.0.tar.gz
+          tar -xzf graalvm-ce-java11-linux-aarch64-21.3.0.tar.gz
+          export GRAALVM_FOLDER=$(pwd)/graalvm-ce-java11-21.3.0
+          export PATH=$GRAALVM_FOLDER/bin:$PATH
+          export JAVA_HOME=$GRAALVM_FOLDER
+          java -version
+          ./gradlew build -Dquarkus.package.type=native
         
     - name: Upload archive
       uses: ncipollo/release-action@v1.8.10
