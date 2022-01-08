@@ -26,28 +26,10 @@ jobs:
         filename: quarkusPackage.zip
         directory: build/quarkus-app
 
-    - name: Build Native ARM64 Quarkus
-      uses: uraimo/run-on-arch-action@v2.1.1
-      with:
-        arch: aarch64
-        distro: ubuntu20.04
-        githubToken: ${{ secrets.GITHUB_TOKEN }}
-        install: |
-          apt-get -q update -y
-          apt-get -q install -y wget build-essential libz-dev zlib1g-dev
-          cd /root/
-          wget -q https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.3.0/graalvm-ce-java11-linux-aarch64-21.3.0.tar.gz
-          tar -xzf graalvm-ce-java11-linux-aarch64-21.3.0.tar.gz
-          graalvm-ce-java11-21.3.0/bin/gu install native-image
-        run: |
-          export GRAALVM_FOLDER=/root/graalvm-ce-java11-21.3.0
-          export PATH=$GRAALVM_FOLDER/bin:$PATH
-          export JAVA_HOME=$GRAALVM_FOLDER
-          ./gradlew build -Dquarkus.package.type=native
     - name: Upload archive
       uses: ncipollo/release-action@v1.8.10
       with:
-        artifacts: "build/quarkus-app/quarkusPackage.zip,pensador-0.0.1-runner"
+        artifacts: "build/quarkus-app/quarkusPackage.zip"
         token: ${{ secrets.GITHUB_TOKEN }}
         allowUpdates: true
         removeArtifacts: true
