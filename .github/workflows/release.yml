@@ -21,11 +21,17 @@ jobs:
       uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
       with:
         arguments: "test"
-    - name: Build Quarkus
-      uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
+    - name: Build Jar Quarkus
+      run: "./gradlew quarkusBuild"
+    - name: Setup ARM64 GraalVM
+      uses: DeLaGuardo/setup-graalvm@5.0
       with:
-        arguments: "quarkusBuild"
-    - name: Archive build
+        graalvm: '21.0.0.2'
+        java: 'java11'
+        arch: 'aarch64'
+    - name: Build Native Quarkus
+      run: "./gradlew build -Dquarkus.package.type=native"
+    - name: Archive Jar build
       uses: thedoctor0/zip-release@master
       with:
         filename: quarkusPackage.zip
