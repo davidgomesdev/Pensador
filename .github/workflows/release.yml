@@ -40,12 +40,10 @@ jobs:
           wget -q https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.3.0/graalvm-ce-java11-linux-aarch64-21.3.0.tar.gz
           tar -xzf graalvm-ce-java11-linux-aarch64-21.3.0.tar.gz
           gu install native-image
-        env: |
-          GRAALVM_FOLDER: /root/graalvm-ce-java11-21.3.0
-          PATH: ${GRAALVM_FOLDER}/bin:$PATH
-          JAVA_HOME: ${GRAALVM_FOLDER}
         run: |
-          echo $PATH
+          export GRAALVM_FOLDER=/root/graalvm-ce-java11-21.3.0
+          export PATH=${GRAALVM_FOLDER}/bin:$PATH
+          export JAVA_HOME=${GRAALVM_FOLDER}
           echo "$(which gu)"
           echo "$(which java)"
           java -version
