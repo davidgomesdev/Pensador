@@ -1,0 +1,37 @@
+name: Release Quarkus package
+
+on:
+  push:
+    branches: [ main ]
+  
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Validate tests
+      uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
+      with:
+        arguments: "test"
+        
+    - name: Build Java Quarkus
+      run: "./gradlew quarkusBuild"
+    - name: Archive Java build
+      uses: thedoctor0/zip-release@master
+      with:
+        filename: quarkusPackage.zip
+        directory: build/quarkus-app
+
+    - name: Upload archive
+      uses: ncipollo/release-action@v1.8.10
+      with:
+        artifacts: "build/quarkus-app/quarkusPackage.zip"
+        token: ${{ secrets.GITHUB_TOKEN }}
+        allowUpdates: true
+        removeArtifacts: true
+        artifactErrorsFailBuild: true
+        prerelease: true
+        name: latest
+        tag: latest
