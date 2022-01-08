@@ -43,15 +43,11 @@ jobs:
           export GRAALVM_FOLDER=/root/graalvm-ce-java11-21.3.0
           export PATH=$GRAALVM_FOLDER/bin:$PATH
           export JAVA_HOME=$GRAALVM_FOLDER
-          echo $PATH
-          echo "$(which gu)"
-          echo "$(which java)"
-          java -version
           ./gradlew build -Dquarkus.package.type=native
     - name: Upload archive
       uses: ncipollo/release-action@v1.8.10
       with:
-        artifacts: "build/quarkus-app/quarkusPackage.zip"
+        artifacts: "build/quarkus-app/quarkusPackage.zip,pensador-0.0.1-runner"
         token: ${{ secrets.GITHUB_TOKEN }}
         allowUpdates: true
         removeArtifacts: true
