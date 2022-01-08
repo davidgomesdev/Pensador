@@ -7,7 +7,7 @@ on:
   pull_request:
   
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
 
     steps:
@@ -30,7 +30,11 @@ jobs:
         java: 'java11'
         arch: 'aarch64'
     - name: Build Native Quarkus
-      run: "./gradlew build -Dquarkus.package.type=native"
+      uses: uraimo/run-on-arch-action@v2
+      with:
+        arch: armv7
+        distro: ubuntu18.04
+        run: "./gradlew build -Dquarkus.package.type=native"
     - name: Archive Jar build
       uses: thedoctor0/zip-release@master
       with:
