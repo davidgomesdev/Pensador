@@ -28,7 +28,7 @@ jobs:
         directory: build/quarkus-app
 
     - name: Build Native Quarkus
-      uses: uraimo/run-on-arch-action@v2
+      uses: uraimo/run-on-arch-action@v2.1.1
       with:
         arch: armv7
         distro: ubuntu18.04
