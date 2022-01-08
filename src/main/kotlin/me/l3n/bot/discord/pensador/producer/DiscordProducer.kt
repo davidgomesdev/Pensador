@@ -7,19 +7,17 @@ import dev.kord.core.entity.Webhook
 import kotlinx.coroutines.runBlocking
 import me.l3n.bot.discord.pensador.config.DiscordConfiguration
 import javax.enterprise.context.ApplicationScoped
-import javax.enterprise.inject.Produces
 import javax.inject.Singleton
 
 @ApplicationScoped
 class DiscordProducer(private val config: DiscordConfiguration) {
 
-    @Produces
     @Singleton
     fun kord(): Kord = runBlocking {
         Kord(config.botToken())
     }
 
-    @Produces
+    @ApplicationScoped
     fun webhook(kord: Kord): Webhook = Webhook(
         WebhookData(
             config.webhook().id(),
