@@ -34,7 +34,8 @@ jobs:
         distro: ubuntu18.04
         githubToken: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          apt-get install wget
+          apt-get update -q -y
+          apt-get install -q -y wget
           wget https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.3.0/graalvm-ce-java11-linux-aarch64-21.3.0.tar.gz
           tar -xzf graalvm-ce-java11-linux-aarch64-21.3.0.tar.gz
           export GRAALVM_FOLDER=$(pwd)/graalvm-ce-java11-21.3.0
