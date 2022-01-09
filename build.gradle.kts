@@ -26,6 +26,11 @@ dependencies {
     implementation("io.quarkus:quarkus-arc")
     implementation("io.quarkus:quarkus-config-yaml")
 
+    // Config
+    val hopliteVersion = "1.4.15"
+    implementation("com.sksamuel.hoplite:hoplite-core:$hopliteVersion")
+    implementation("com.sksamuel.hoplite:hoplite-yaml:$hopliteVersion")
+
     // Discord
     implementation("dev.kord:kord-core:0.7.4")
     implementation("dev.kord.x:emoji:0.5.0")

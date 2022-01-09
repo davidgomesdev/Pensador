@@ -5,25 +5,25 @@ import dev.kord.core.Kord
 import dev.kord.core.cache.data.WebhookData
 import dev.kord.core.entity.Webhook
 import kotlinx.coroutines.runBlocking
-import me.l3n.bot.discord.pensador.config.DiscordConfiguration
+import me.l3n.bot.discord.pensador.config.DiscordConfig
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Singleton
 
 @ApplicationScoped
-class DiscordProducer(private val config: DiscordConfiguration) {
+class DiscordProducer(private val config: DiscordConfig) {
 
     @Singleton
     fun kord(): Kord = runBlocking {
-        Kord(config.botToken())
+        Kord(config.botToken)
     }
 
     @ApplicationScoped
     fun webhook(kord: Kord): Webhook = Webhook(
         WebhookData(
-            config.webhook().id(),
+            config.webhook.id,
             WebhookType.Incoming,
-            channelId = config.channelId(),
-            applicationId = config.appId(),
+            channelId = config.channelId,
+            applicationId = config.appId,
         ),
         kord = kord
     )

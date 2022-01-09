@@ -10,7 +10,7 @@ import kotlinx.coroutines.Dispatchers.Unconfined
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import me.l3n.bot.discord.pensador.config.BotConfiguration
-import me.l3n.bot.discord.pensador.config.DiscordConfiguration
+import me.l3n.bot.discord.pensador.config.DiscordConfig
 import me.l3n.bot.discord.pensador.service.crawler.Quote
 import me.l3n.bot.discord.pensador.service.handler.EventHandler
 import me.l3n.bot.discord.pensador.util.getTextChannel
@@ -29,7 +29,7 @@ val ESCAPE_DISCORD_REGEX = "([*_~`>|])".toRegex()
 class DiscordService(
     private val discord: Kord,
     private val webhook: Webhook,
-    private val config: DiscordConfiguration,
+    private val config: DiscordConfig,
     private val botConfig: BotConfiguration,
 ) {
 
@@ -61,10 +61,10 @@ class DiscordService(
     }
 
     suspend fun cleanupFreshQuotes() =
-        discord.getTextChannel(config.channelId()).messages.collect { msg -> msg.delete() }
+        discord.getTextChannel(config.channelId).messages.collect { msg -> msg.delete() }
 
     suspend infix fun sendQuote(quote: Quote) {
-        webhook.execute(config.webhook().token()) {
+        webhook.execute(config.webhook.token) {
             avatarUrl = quote.author.imageUrl ?: botConfig.noImageUrl()
             username = quote.author.name
             content = quote.text.escapeForDiscord().trim()
