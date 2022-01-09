@@ -7,10 +7,10 @@ import me.l3n.bot.discord.pensador.util.toPlainText
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
-import javax.inject.Singleton
+import javax.enterprise.context.ApplicationScoped
 
 @LookupIfProperty(name = "source", stringValue = "pensador")
-@Singleton
+@ApplicationScoped
 class PensadorCrawlerService(
     private val urlConfig: PensadorUrlConfig,
 ) : CrawlerService() {
