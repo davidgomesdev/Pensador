@@ -6,14 +6,14 @@ import org.eclipse.microprofile.config.inject.ConfigProperty
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
-import javax.enterprise.context.ApplicationScoped
+import javax.inject.Singleton
 
 
 private val EXTRACT_QUOTE_REGEX = "(?<=“)(.*?)(?=”)".toRegex(RegexOption.DOT_MATCHES_ALL)
 private val AUTHOR_NAME_REPLACE_REGEX = "[^A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ' .,]+|,\$".toRegex()
 
 @LookupIfProperty(name = "source", stringValue = "goodreads", lookupIfMissing = true)
-@ApplicationScoped
+@Singleton
 class GoodReadsCrawlerService : CrawlerService() {
 
     @ConfigProperty(name = "url.goodreads-quotes")
