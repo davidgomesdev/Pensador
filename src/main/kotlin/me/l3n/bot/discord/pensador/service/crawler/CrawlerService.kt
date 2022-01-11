@@ -5,6 +5,7 @@ import io.ktor.client.request.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
+import me.l3n.bot.discord.pensador.util.NoArgConstructor
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -12,6 +13,7 @@ import org.jsoup.select.Elements
 import javax.inject.Inject
 
 
+@NoArgConstructor
 abstract class CrawlerService {
 
     @Inject

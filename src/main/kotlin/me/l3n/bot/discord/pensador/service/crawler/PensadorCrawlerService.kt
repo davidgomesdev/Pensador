@@ -3,6 +3,7 @@ package me.l3n.bot.discord.pensador.service.crawler
 import io.quarkus.arc.lookup.LookupIfProperty
 import kotlinx.coroutines.runBlocking
 import me.l3n.bot.discord.pensador.config.PensadorUrlConfig
+import me.l3n.bot.discord.pensador.util.NoArgConstructor
 import me.l3n.bot.discord.pensador.util.toPlainText
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -11,6 +12,7 @@ import javax.enterprise.context.ApplicationScoped
 
 @LookupIfProperty(name = "source", stringValue = "pensador")
 @ApplicationScoped
+@NoArgConstructor
 class PensadorCrawlerService(
     private val urlConfig: PensadorUrlConfig,
 ) : CrawlerService() {

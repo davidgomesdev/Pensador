@@ -3,6 +3,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") version "1.5.31"
     id("io.quarkus")
+
+    id("org.jetbrains.kotlin.plugin.noarg") version "1.6.10"
 }
 
 repositories {
@@ -10,13 +12,16 @@ repositories {
     mavenLocal()
 }
 
+val kotlinVersion: String by project
+
 val quarkusPlatformGroupId: String by project
 val quarkusPlatformArtifactId: String by project
 val quarkusPlatformVersion: String by project
 
 dependencies {
     // Kotlin++!
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinVersion")
+    implementation("org.jetbrains.kotlin:kotlin-noarg:$kotlinVersion")
 
     // Quarkus
     implementation(
@@ -68,4 +73,8 @@ compileKotlin.kotlinOptions {
 val compileTestKotlin: KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
     jvmTarget = "11"
+}
+
+noArg {
+    annotation("me.l3n.bot.discord.pensador.util.NoArgConstructor")
 }
