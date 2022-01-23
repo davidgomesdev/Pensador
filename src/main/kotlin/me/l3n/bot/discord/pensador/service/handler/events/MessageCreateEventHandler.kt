@@ -15,14 +15,12 @@ import javax.inject.Singleton
 class MessageCreateEventHandler(
     private val discord: Kord,
     private val commandRouter: CommandRouter,
-) : EventHandler<MessageCreateEvent>() {
-
-    override val type = MessageCreateEvent::class
+) : EventHandler<MessageCreateEvent>(MessageCreateEvent::class) {
 
     @Inject
     private lateinit var log: Logger
 
-    override val handle: suspend MessageCreateEvent.() -> Unit = handler@{
+    override val handler: suspend MessageCreateEvent.() -> Unit = handler@{
         if (getGuild() != null) return@handler
 
         val author = message.author ?: return@handler

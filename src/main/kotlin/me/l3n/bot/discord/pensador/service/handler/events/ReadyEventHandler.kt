@@ -8,14 +8,12 @@ import javax.inject.Singleton
 
 
 @Singleton
-class ReadyEventHandler : EventHandler<ReadyEvent>() {
-
-    override val type = ReadyEvent::class
+class ReadyEventHandler : EventHandler<ReadyEvent>(ReadyEvent::class) {
 
     @Inject
     private lateinit var log: Logger
 
-    override val handle: suspend ReadyEvent.() -> Unit = {
+    override val handler: suspend ReadyEvent.() -> Unit = {
         log.info("Logged in!")
     }
 }

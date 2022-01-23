@@ -3,7 +3,6 @@ package me.l3n.bot.discord.pensador.service
 import dev.kord.core.Kord
 import dev.kord.core.behavior.execute
 import dev.kord.core.entity.Webhook
-import dev.kord.core.event.Event
 import io.quarkus.runtime.Startup
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers.Unconfined
@@ -48,10 +47,9 @@ class DiscordService(
         GlobalScope.launch(Unconfined) { discord.login() }
     }
 
-    private fun registerEvents() =
-        eventHandlers.forEach { handler ->
-            handler.register<Event>(discord)
-        }
+    private fun registerEvents() = eventHandlers.forEach { handler ->
+        handler.register(discord)
+    }
 
     @DelicateCoroutinesApi
     @PreDestroy

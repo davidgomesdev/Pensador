@@ -4,6 +4,7 @@ import dev.kord.core.behavior.reply
 import dev.kord.core.entity.Message
 import dev.kord.x.emoji.Emojis
 import me.l3n.bot.discord.pensador.service.crawler.CrawlerService
+import me.l3n.bot.discord.pensador.service.crawler.Quote
 import me.l3n.bot.discord.pensador.service.handler.CommandHandler
 import me.l3n.bot.discord.pensador.service.isValid
 import me.l3n.bot.discord.pensador.util.coRetry
@@ -33,50 +34,54 @@ class GetQuoteCommandHandler(
 
         log.debug("Crawling quote for '${author.username}'")
 
-        val quote = coRetry(
-            5,
-            block = {
-                log.debug("Crawling a quote")
-
-                val result = crawler.crawlRandomQuote()
-                log.info("Crawled a random quote")
-
-                if (result.isValid()) Result.success(result)
-                else {
-                    Result.failure(IllegalArgumentException("Quote not valid"))
-                }
-            },
-            beforeRetry = { i ->
-                log.debug("Retrying crawling a valid quote (#$i)")
-            },
-            afterRetry = { error -> log.debug(error.message) },
-            retryExceeded = {
-                log.warn("Retry for crawling a valid quote exceeded")
-            },
-        ).getOrNull()
+        val quote = crawlQuote().getOrNull()
 
         searchingMessage.delete()
 
-        message.reply {
-            if (quote == null)
-                content = "Couldn't find a valid quote! ${Emojis.weary}"
+        replyQuote(message, quote)
+
+        return Result.success()
+    }
+
+    private suspend fun crawlQuote() = coRetry(
+        5,
+        block = {
+            log.debug("Crawling a quote")
+
+            val result = crawler.crawlRandomQuote()
+            log.info("Crawled a random quote")
+
+            if (result.isValid()) Result.success(result)
             else {
-                val quoteAuthor = quote.author
+                Result.failure(IllegalArgumentException("Quote not valid"))
+            }
+        },
+        beforeRetry = { i ->
+            log.debug("Retrying crawling a valid quote (#$i)")
+        },
+        afterRetry = { error -> log.debug(error.message) },
+        retryExceeded = {
+            log.warn("Retry for crawling a valid quote exceeded")
+        },
+    )
 
-                this.embed {
-                    description = quote.text
+    private suspend fun replyQuote(message: Message, quote: Quote?) = message.reply {
+        if (quote == null)
+            content = "Couldn't find a valid quote! ${Emojis.weary}"
+        else {
+            val quoteAuthor = quote.author
 
-                    thumbnail {
-                        this.url = quoteAuthor.imageUrl ?: ""
-                    }
+            this.embed {
+                description = quote.text
 
-                    footer {
-                        this.text = quote.author.name
-                    }
+                thumbnail {
+                    this.url = quoteAuthor.imageUrl ?: ""
+                }
+
+                footer {
+                    this.text = quote.author.name
                 }
             }
         }
-
-        return Result.success()
     }
 }

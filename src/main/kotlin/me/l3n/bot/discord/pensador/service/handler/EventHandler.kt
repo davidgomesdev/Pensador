@@ -6,16 +6,14 @@ import dev.kord.core.on
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
 
-abstract class EventHandler<T : Event> {
+abstract class EventHandler<T : Event>(private val type: KClass<T>) {
 
-    abstract val type: KClass<T>
-
-    inline fun <reified T : Event> register(discord: Kord) {
-        discord.on<T> {
+    fun register(discord: Kord) {
+        discord.on<Event> {
             if (type.isInstance(this))
-                handle(type.cast(this))
+                handler(type.cast(this))
         }
     }
 
-    abstract val handle: suspend T.() -> Unit
+    abstract val handler: suspend T.() -> Unit
 }

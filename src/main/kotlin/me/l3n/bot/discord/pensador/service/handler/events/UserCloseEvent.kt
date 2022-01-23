@@ -8,14 +8,12 @@ import javax.inject.Singleton
 
 
 @Singleton
-class UserCloseEvent : EventHandler<DisconnectEvent.UserCloseEvent>() {
-
-    override val type = DisconnectEvent.UserCloseEvent::class
+class UserCloseEvent : EventHandler<DisconnectEvent.UserCloseEvent>(DisconnectEvent.UserCloseEvent::class) {
 
     @Inject
     private lateinit var log: Logger
 
-    override val handle: suspend DisconnectEvent.UserCloseEvent.() -> Unit = {
+    override val handler: suspend DisconnectEvent.UserCloseEvent.() -> Unit = {
         log.info("Logged out!")
     }
 }
