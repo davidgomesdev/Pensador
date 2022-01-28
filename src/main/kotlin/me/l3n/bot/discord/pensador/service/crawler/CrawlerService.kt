@@ -2,9 +2,8 @@ package me.l3n.bot.discord.pensador.service.crawler
 
 import io.ktor.client.*
 import io.ktor.client.request.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.map
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -31,14 +30,14 @@ abstract class CrawlerService {
 
     protected abstract fun getMaxPageCount(): Int
 
-    suspend infix fun crawlQuotes(page: Int): Flow<Quote> {
+    suspend infix fun crawlQuotes(page: Int): List<Quote> {
         val pageUrl = getPageUrl(page)
         val pageHtml = parseHtml(pageUrl)
 
         val quotesHtml = extractQuotesHtml(pageHtml)
 
-        return quotesHtml.asFlow()
-            .map(::parseQuote)
+        return quotesHtml.toList()
+            .map { parseQuote(it) }
     }
 
     abstract infix fun getPageUrl(page: Int): String
@@ -51,13 +50,24 @@ abstract class CrawlerService {
 
     protected abstract infix fun extractQuotesHtml(rootHtml: Document): Elements
 
-    private infix fun parseQuote(quoteHtml: Element): Quote {
+    private suspend infix fun parseQuote(quoteHtml: Element): Quote {
         val content = getQuoteContent(quoteHtml)
         val authorHtml = getAuthorHtml(quoteHtml)
         val authorName = getAuthorName(authorHtml).trim()
-        val authorImageUrl = getAuthorImageUrl(authorHtml)
+        val authorImageUrl =
+            getAuthorImageUrl(authorHtml)?.takeIf { isImageUrl(it) }
 
-        return Quote(Author(authorName, authorImageUrl), content)
+        return Quote(
+            Author(authorName, authorImageUrl),
+            content,
+        )
+    }
+
+    private suspend infix fun isImageUrl(url: String) = url.let {
+        url.isNotBlank() && http.get<HttpResponse>(url).let { response ->
+            response.status == HttpStatusCode.OK &&
+                response.contentType()?.match(ContentType.Image.Any) ?: false
+        }
     }
 
     protected abstract infix fun getQuoteContent(quoteHtml: Element): String
