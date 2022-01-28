@@ -5,6 +5,7 @@ import io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import me.l3n.bot.discord.pensador.config.BotConfiguration
 import me.l3n.bot.discord.pensador.service.DiscordService
 import me.l3n.bot.discord.pensador.service.crawler.CrawlerService
 import me.l3n.bot.discord.pensador.service.isValid
@@ -19,6 +20,7 @@ class PensadorScheduler(
     private val discord: DiscordService,
     crawlerInstance: Instance<CrawlerService>,
     private val log: Logger,
+    private val config: BotConfiguration,
 ) {
 
     private val crawler: CrawlerService =
@@ -32,7 +34,7 @@ class PensadorScheduler(
                 block = {
                     log.debug("Crawling a quote")
 
-                    val result = crawler.crawlRandomQuote()
+                    val result = crawler.crawlRandomQuote(config.charLimit())
                     log.info("Crawled a random quote")
 
                     if (result.isValid()) Result.success(result)

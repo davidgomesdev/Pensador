@@ -4,6 +4,7 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import org.jboss.logging.Logger
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -14,7 +15,21 @@ import javax.inject.Inject
 abstract class CrawlerService {
 
     @Inject
+    private lateinit var log: Logger
+
+    @Inject
     private lateinit var http: HttpClient
+
+    suspend fun crawlRandomQuote(charLimit: Int): Quote {
+        var quote = crawlRandomQuote()
+
+        while (quote.text.length > charLimit) {
+            log.debug("Crawled quote too large, retrying")
+            quote = crawlRandomQuote()
+        }
+
+        return quote
+    }
 
     suspend fun crawlRandomQuote(): Quote {
         val page = getRandomPage()

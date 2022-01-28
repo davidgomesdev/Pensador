@@ -3,6 +3,7 @@ package me.l3n.bot.discord.pensador.service.handler.commands
 import dev.kord.core.behavior.reply
 import dev.kord.core.entity.Message
 import dev.kord.x.emoji.Emojis
+import me.l3n.bot.discord.pensador.config.BotConfiguration
 import me.l3n.bot.discord.pensador.service.crawler.CrawlerService
 import me.l3n.bot.discord.pensador.service.crawler.Quote
 import me.l3n.bot.discord.pensador.service.handler.CommandHandler
@@ -18,6 +19,7 @@ import javax.inject.Inject
 @ApplicationScoped
 class GetQuoteCommandHandler(
     crawlerInstance: Instance<CrawlerService>,
+    private val config: BotConfiguration,
 ) : CommandHandler() {
 
     private val crawler: CrawlerService =
@@ -48,7 +50,7 @@ class GetQuoteCommandHandler(
         block = {
             log.debug("Crawling a quote")
 
-            val result = crawler.crawlRandomQuote()
+            val result = crawler.crawlRandomQuote(config.charLimit())
             log.info("Crawled a random quote")
 
             if (result.isValid()) Result.success(result)

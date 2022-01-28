@@ -5,6 +5,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
+import me.l3n.bot.discord.pensador.config.BotConfiguration
 import me.l3n.bot.discord.pensador.service.DiscordService
 import me.l3n.bot.discord.pensador.service.crawler.Author
 import me.l3n.bot.discord.pensador.service.crawler.CrawlerService
@@ -22,11 +23,14 @@ class PensadorSchedulerTest {
     private val crawlerMock: CrawlerService = mockk()
     private val crawlerInstanceMock: Instance<CrawlerService> =
         mockk { every { get() } returns crawlerMock }
+    private val botConfigurationMock: BotConfiguration = mockk { every { charLimit() } returns 5 }
 
-    private val scheduler = PensadorScheduler(serviceMock, crawlerInstanceMock, mockk(relaxUnitFun = true))
+    private val scheduler =
+        PensadorScheduler(serviceMock, crawlerInstanceMock, mockk(relaxUnitFun = true), botConfigurationMock)
 
     @BeforeEach
     fun setupMocks() {
+        coEvery { crawlerMock.crawlRandomQuote(any()) }.returns(dummyQuote)
         coEvery { crawlerMock.crawlRandomQuote() }.returns(dummyQuote)
         coEvery { serviceMock.sendQuote(any()) }.returns(Unit)
         coEvery { serviceMock.cleanupFreshQuotes() }.returns(Unit)
@@ -36,7 +40,7 @@ class PensadorSchedulerTest {
     fun `should crawl a quote and send it to Discord`() {
         runBlocking { scheduler.sendRandomQuote() }
 
-        coVerify(exactly = 1) { crawlerMock.crawlRandomQuote() }
+        coVerify(exactly = 1) { crawlerMock.crawlRandomQuote(5) }
         coVerify(exactly = 1) { serviceMock.sendQuote(dummyQuote) }
     }
 }
