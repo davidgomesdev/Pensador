@@ -19,7 +19,7 @@ class GoodReadsCrawlerService : CrawlerService() {
     @ConfigProperty(name = "url.goodreads-quotes")
     private lateinit var quotesUrl: String
 
-    override fun getMaxPageCount(): Int = 20
+    override fun getMaxPageCount(): Int = 100
 
     override infix fun getPageUrl(page: Int): String = "$quotesUrl?page=$page"
 

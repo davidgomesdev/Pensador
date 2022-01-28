@@ -15,7 +15,9 @@ class PensadorCrawlerService(
     private val urlConfig: PensadorUrlConfig,
 ) : CrawlerService() {
 
-    override fun getMaxPageCount(): Int = 20
+    // Depends on page, but on the "populares" it's almost infinite...
+    // There doesn't seem a way to know exactly
+    override fun getMaxPageCount(): Int = 100
 
     override infix fun getPageUrl(page: Int): String = "${urlConfig.populares()}/$page"
 
