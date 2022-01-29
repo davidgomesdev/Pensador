@@ -8,7 +8,7 @@ import me.l3n.bot.discord.pensador.service.crawler.CrawlerService
 import me.l3n.bot.discord.pensador.service.crawler.Quote
 import me.l3n.bot.discord.pensador.service.handler.CommandHandler
 import me.l3n.bot.discord.pensador.service.isValid
-import me.l3n.bot.discord.pensador.util.coRetry
+import me.l3n.bot.discord.pensador.util.retryTimes
 import me.l3n.bot.discord.pensador.util.success
 import org.jboss.logging.Logger
 import javax.enterprise.context.ApplicationScoped
@@ -45,7 +45,7 @@ class GetQuoteCommandHandler(
         return Result.success()
     }
 
-    private suspend fun crawlQuote() = coRetry(
+    private suspend fun crawlQuote() = retryTimes(
         5,
         block = {
             log.debug("Crawling a quote")

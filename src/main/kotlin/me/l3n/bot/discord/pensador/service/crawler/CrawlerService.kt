@@ -4,6 +4,7 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import me.l3n.bot.discord.pensador.util.retryUntil
 import org.jboss.logging.Logger
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -20,50 +21,24 @@ abstract class CrawlerService {
     @Inject
     private lateinit var http: HttpClient
 
-    suspend fun crawlRandomQuote(charLimit: Int): Quote {
-        var quote = crawlRandomQuote()
+    suspend fun crawlRandomQuote(charLimit: Int): Quote =
+        retryUntil(
+            block = { crawlRandomQuote() },
+            isValid = { quote -> quote.text.length > charLimit },
+            beforeRetry = { log.debug("Crawled quote too large, retrying") }
+        )
 
-        while (quote.text.length > charLimit) {
-            log.debug("Crawled quote too large, retrying")
-            quote = crawlRandomQuote()
-        }
+    suspend fun crawlRandomQuote(): Quote =
+        crawlPageRandomQuote(getRandomPage())
 
-        return quote
-    }
-
-    suspend fun crawlRandomQuote(): Quote {
-        val page = getRandomPage()
+    private suspend infix fun crawlPageRandomQuote(page: Int): Quote {
         val pageUrl = getPageUrl(page)
         val pageHtml = parseHtml(pageUrl)
 
         val quotesHtml = extractQuotesHtml(pageHtml)
 
-        return parseQuote(quotesHtml.random())
+        return parseQuote(quotesHtml.toList().random())
     }
-
-    private fun getRandomPage() = (0 until getMaxPageCount()).random() + 1
-
-    protected abstract fun getMaxPageCount(): Int
-
-    suspend infix fun crawlQuotes(page: Int): List<Quote> {
-        val pageUrl = getPageUrl(page)
-        val pageHtml = parseHtml(pageUrl)
-
-        val quotesHtml = extractQuotesHtml(pageHtml)
-
-        return quotesHtml.toList()
-            .map { parseQuote(it) }
-    }
-
-    abstract infix fun getPageUrl(page: Int): String
-
-    protected suspend infix fun parseHtml(url: String): Document {
-        val html = http.get<String>(url)
-
-        return Jsoup.parse(html)
-    }
-
-    protected abstract infix fun extractQuotesHtml(rootHtml: Document): Elements
 
     private suspend infix fun parseQuote(quoteHtml: Element): Quote {
         val content = getQuoteContent(quoteHtml)
@@ -77,6 +52,20 @@ abstract class CrawlerService {
             content,
         )
     }
+
+    private fun getRandomPage() = (0 until getMaxPageCount()).random() + 1
+
+    protected abstract fun getMaxPageCount(): Int
+
+    abstract infix fun getPageUrl(page: Int): String
+
+    protected suspend infix fun parseHtml(url: String): Document {
+        val html = http.get<String>(url)
+
+        return Jsoup.parse(html)
+    }
+
+    protected abstract infix fun extractQuotesHtml(rootHtml: Document): Elements
 
     private suspend infix fun isImageUrl(url: String) = url.let {
         url.isNotBlank() && http.get<HttpResponse>(url).let { response ->

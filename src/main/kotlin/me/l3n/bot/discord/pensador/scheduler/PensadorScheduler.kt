@@ -9,7 +9,7 @@ import me.l3n.bot.discord.pensador.config.BotConfiguration
 import me.l3n.bot.discord.pensador.service.DiscordService
 import me.l3n.bot.discord.pensador.service.crawler.CrawlerService
 import me.l3n.bot.discord.pensador.service.isValid
-import me.l3n.bot.discord.pensador.util.coRetry
+import me.l3n.bot.discord.pensador.util.retryTimes
 import org.jboss.logging.Logger
 import javax.enterprise.context.ApplicationScoped
 import javax.enterprise.inject.Instance
@@ -29,7 +29,7 @@ class PensadorScheduler(
     @Scheduled(cron = "{cron-expr}", concurrentExecution = SKIP)
     fun sendRandomQuote() = runBlocking {
         val quote = async {
-            coRetry(
+            retryTimes(
                 5,
                 block = {
                     log.debug("Crawling a quote")
