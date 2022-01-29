@@ -2,6 +2,14 @@
 
 "Just another Discord bot, this one sends random quotes :)" sums it up.
 
+It sends a random quote every [period](#Period) you define.
+
+![Periodic quote](imgs/periodic-quote.png)
+
+There is also a command to get one as well.
+
+![Quote command](imgs/command-quote.png)
+
 ## Required configuration
 
 You need to create an `application.yaml` file, with the following fields filled:
@@ -38,4 +46,6 @@ You can choose which one by specifying the `source` in the yaml. (`goodreads` or
 
 ### Period 
 
-To change how often it runs, specify in the yaml as `cron-expr`. (the Quarkus scheduler uses the [quartz format](http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/crontrigger.html) by default)
+To change how often it runs, specify in the yaml as `cron-expr`. (uses Quarkus scheduler with the [quartz format](http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/crontrigger.html) by default)
+
+By default is runs every 9, 12, 15, 18, 21 o'clock. 😳
