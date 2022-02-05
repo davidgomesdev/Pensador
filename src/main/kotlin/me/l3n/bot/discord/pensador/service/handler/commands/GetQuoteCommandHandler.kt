@@ -8,7 +8,7 @@ import me.l3n.bot.discord.pensador.service.crawler.CrawlerService
 import me.l3n.bot.discord.pensador.service.crawler.Quote
 import me.l3n.bot.discord.pensador.service.handler.CommandHandler
 import me.l3n.bot.discord.pensador.service.isValid
-import me.l3n.bot.discord.pensador.util.retryTimes
+import me.l3n.bot.discord.pensador.util.retry
 import me.l3n.bot.discord.pensador.util.success
 import org.jboss.logging.Logger
 import javax.enterprise.context.ApplicationScoped
@@ -45,7 +45,7 @@ class GetQuoteCommandHandler(
         return Result.success()
     }
 
-    private suspend fun crawlQuote() = retryTimes(
+    private suspend fun crawlQuote() = retry(
         5,
         block = {
             log.debug("Crawling a quote")
@@ -62,8 +62,8 @@ class GetQuoteCommandHandler(
             log.debug("Retrying crawling a valid quote (#$i)")
         },
         afterRetry = { error -> log.debug(error.message) },
-        retryExceeded = {
-            log.warn("Retry for crawling a valid quote exceeded")
+        retryExceeded = { times ->
+            log.warn("Retry for crawling a valid quote exceeded ($times)")
         },
     )
 

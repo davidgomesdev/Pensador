@@ -5,44 +5,39 @@ inline fun <T> retryUntil(
     block: () -> T,
     isValid: (T) -> Boolean,
     beforeRetry: () -> Unit = {},
-    afterRetry: () -> Unit = {},
+    afterRetry: (T) -> Unit = {},
 ): T {
     var value = block()
 
     while (!isValid(value)) {
         beforeRetry()
         value = block()
-        afterRetry()
+        afterRetry(value)
     }
 
     return value
 }
 
-/**
- * @param afterRetry is called only if [block] fails
- */
-inline fun <T> retryTimes(
+inline fun <T> retry(
     times: Int,
     block: () -> Result<T>,
     beforeRetry: (Int) -> Unit = {},
     afterRetry: (Throwable) -> Unit = {},
-    retryExceeded: () -> Unit = {},
+    retryExceeded: (Int) -> Unit = {},
 ): Result<T> {
-    for (i in 0 until times) {
-        if (i != 0) beforeRetry(i)
+    var value = block()
 
-        val result = block()
+    if (value.isSuccess) return value
 
-        if (result.isSuccess) return result
-        afterRetry(result.exceptionOrNull()!!)
+    repeat(times) { i ->
+        beforeRetry(i)
+        value = block()
+
+        if (value.isFailure)
+            afterRetry(value.exceptionOrNull()!!)
     }
 
-    val result = block()
+    retryExceeded(times)
 
-    if (result.isFailure) {
-        afterRetry(result.exceptionOrNull()!!)
-        retryExceeded()
-    }
-
-    return result
+    return value
 }
