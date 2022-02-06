@@ -4,6 +4,8 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import me.l3n.bot.discord.pensador.service.isValid
+import me.l3n.bot.discord.pensador.util.retry
 import me.l3n.bot.discord.pensador.util.retryUntil
 import org.jboss.logging.Logger
 import org.jsoup.Jsoup
@@ -20,6 +22,27 @@ abstract class CrawlerService {
 
     @Inject
     private lateinit var http: HttpClient
+
+    suspend fun crawlDiscordValidQuote(charLimit: Int) =
+        retry(
+            5,
+            block = {
+                log.debug("Crawling a quote")
+
+                val result = crawlRandomQuote(charLimit)
+                log.info("Crawled a random quote")
+
+                if (result.isValid()) Result.success(result)
+                else {
+                    Result.failure(IllegalArgumentException("Quote not valid for discord"))
+                }
+            },
+            beforeRetry = { i -> log.debug("Retrying crawling a valid quote (#$i)") },
+            afterRetry = { error -> log.debug(error.message) },
+            retryExceeded = { times ->
+                log.warn("Retry for crawling a valid quote exceeded ($times)")
+            },
+        ).getOrNull()
 
     suspend fun crawlRandomQuote(charLimit: Int): Quote =
         retryUntil(

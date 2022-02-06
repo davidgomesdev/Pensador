@@ -5,7 +5,7 @@ import io.smallrye.config.ConfigMapping
 
 
 @ConfigMapping(prefix = "discord")
-interface DiscordConfiguration {
+interface DiscordConfig {
 
     fun botToken(): String
     fun webhook(): WebhookConfiguration

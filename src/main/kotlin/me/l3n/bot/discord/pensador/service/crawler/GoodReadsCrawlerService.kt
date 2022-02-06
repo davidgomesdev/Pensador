@@ -1,8 +1,9 @@
 package me.l3n.bot.discord.pensador.service.crawler
 
 import io.quarkus.arc.lookup.LookupIfProperty
+import me.l3n.bot.discord.pensador.config.GoodReadsConfig
+import me.l3n.bot.discord.pensador.config.GoodReadsUrlConfig
 import me.l3n.bot.discord.pensador.util.toPlainText
-import org.eclipse.microprofile.config.inject.ConfigProperty
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
@@ -14,14 +15,14 @@ private val AUTHOR_NAME_REPLACE_REGEX = "[^A-Za-záàâãéèêíïóôõöúç�
 
 @LookupIfProperty(name = "source", stringValue = "goodreads", lookupIfMissing = true)
 @Singleton
-class GoodReadsCrawlerService : CrawlerService() {
+class GoodReadsCrawlerService(
+    private val urlConfig: GoodReadsUrlConfig,
+    private val config: GoodReadsConfig,
+) : CrawlerService() {
 
-    @ConfigProperty(name = "url.goodreads-quotes")
-    private lateinit var quotesUrl: String
+    override fun getMaxPageCount(): Int = config.pageCount()
 
-    override fun getMaxPageCount(): Int = 100
-
-    override infix fun getPageUrl(page: Int): String = "$quotesUrl?page=$page"
+    override infix fun getPageUrl(page: Int): String = "${urlConfig.quotes()}?page=$page"
 
     override infix fun extractQuotesHtml(rootHtml: Document): Elements =
         rootHtml.getElementsByClass("quoteDetails")

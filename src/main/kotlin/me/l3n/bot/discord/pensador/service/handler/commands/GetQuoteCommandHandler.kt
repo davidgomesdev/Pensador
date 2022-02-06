@@ -3,12 +3,10 @@ package me.l3n.bot.discord.pensador.service.handler.commands
 import dev.kord.core.behavior.reply
 import dev.kord.core.entity.Message
 import dev.kord.x.emoji.Emojis
-import me.l3n.bot.discord.pensador.config.BotConfiguration
+import me.l3n.bot.discord.pensador.config.BotConfig
 import me.l3n.bot.discord.pensador.service.crawler.CrawlerService
 import me.l3n.bot.discord.pensador.service.crawler.Quote
 import me.l3n.bot.discord.pensador.service.handler.CommandHandler
-import me.l3n.bot.discord.pensador.service.isValid
-import me.l3n.bot.discord.pensador.util.retry
 import me.l3n.bot.discord.pensador.util.success
 import org.jboss.logging.Logger
 import javax.enterprise.context.ApplicationScoped
@@ -19,7 +17,7 @@ import javax.inject.Inject
 @ApplicationScoped
 class GetQuoteCommandHandler(
     crawlerInstance: Instance<CrawlerService>,
-    private val config: BotConfiguration,
+    private val config: BotConfig,
 ) : CommandHandler() {
 
     private val crawler: CrawlerService =
@@ -36,7 +34,7 @@ class GetQuoteCommandHandler(
 
         log.debug("Crawling quote for '${author.username}'")
 
-        val quote = crawlQuote().getOrNull()
+        val quote = crawlQuote()
 
         searchingMessage.delete()
 
@@ -45,27 +43,7 @@ class GetQuoteCommandHandler(
         return Result.success()
     }
 
-    private suspend fun crawlQuote() = retry(
-        5,
-        block = {
-            log.debug("Crawling a quote")
-
-            val result = crawler.crawlRandomQuote(config.charLimit())
-            log.info("Crawled a random quote")
-
-            if (result.isValid()) Result.success(result)
-            else {
-                Result.failure(IllegalArgumentException("Quote not valid"))
-            }
-        },
-        beforeRetry = { i ->
-            log.debug("Retrying crawling a valid quote (#$i)")
-        },
-        afterRetry = { error -> log.debug(error.message) },
-        retryExceeded = { times ->
-            log.warn("Retry for crawling a valid quote exceeded ($times)")
-        },
-    )
+    private suspend fun crawlQuote() = crawler.crawlDiscordValidQuote(config.charLimit())
 
     private suspend fun replyQuote(message: Message, quote: Quote?) = message.reply {
         if (quote == null)

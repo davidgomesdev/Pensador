@@ -2,6 +2,7 @@ package me.l3n.bot.discord.pensador.service.crawler
 
 import io.quarkus.arc.lookup.LookupIfProperty
 import kotlinx.coroutines.runBlocking
+import me.l3n.bot.discord.pensador.config.PensadorConfig
 import me.l3n.bot.discord.pensador.config.PensadorUrlConfig
 import me.l3n.bot.discord.pensador.util.toPlainText
 import org.jsoup.nodes.Document
@@ -13,13 +14,14 @@ import javax.inject.Singleton
 @Singleton
 class PensadorCrawlerService(
     private val urlConfig: PensadorUrlConfig,
+    private val config: PensadorConfig,
 ) : CrawlerService() {
 
     // Depends on page, but on the "populares" it's almost infinite...
     // There doesn't seem a way to know exactly
-    override fun getMaxPageCount(): Int = 100
+    override fun getMaxPageCount(): Int = config.pageCount()
 
-    override infix fun getPageUrl(page: Int): String = "${urlConfig.populares()}/$page"
+    override infix fun getPageUrl(page: Int): String = "${urlConfig.popularQuotes()}/$page"
 
     override infix fun extractQuotesHtml(rootHtml: Document): Elements =
         rootHtml.getElementsByClass("thought-card")

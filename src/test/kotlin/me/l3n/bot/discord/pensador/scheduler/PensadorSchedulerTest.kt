@@ -5,7 +5,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
-import me.l3n.bot.discord.pensador.config.BotConfiguration
+import me.l3n.bot.discord.pensador.config.BotConfig
 import me.l3n.bot.discord.pensador.service.DiscordService
 import me.l3n.bot.discord.pensador.service.crawler.Author
 import me.l3n.bot.discord.pensador.service.crawler.CrawlerService
@@ -23,10 +23,10 @@ class PensadorSchedulerTest {
     private val crawlerMock: CrawlerService = mockk()
     private val crawlerInstanceMock: Instance<CrawlerService> =
         mockk { every { get() } returns crawlerMock }
-    private val botConfigurationMock: BotConfiguration = mockk { every { charLimit() } returns 5 }
+    private val botConfigMock: BotConfig = mockk { every { charLimit() } returns 5 }
 
     private val scheduler =
-        PensadorScheduler(serviceMock, crawlerInstanceMock, mockk(relaxUnitFun = true), botConfigurationMock)
+        PensadorScheduler(serviceMock, crawlerInstanceMock, mockk(relaxUnitFun = true), botConfigMock)
 
     @BeforeEach
     fun setupMocks() {

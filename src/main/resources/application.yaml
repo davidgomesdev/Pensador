@@ -23,7 +23,14 @@ bot:
   no-image-url: "https://thumbs.dreamstime.com/b/em-inc%C3%B3gnito-%C3%ADcone-equipe-cara-com-vidros-barba-e-chap%C3%A9u-suportes-da-foto-vetor-109640094.jpg"
 
 url:
-  goodreads-quotes: https://www.goodreads.com/quotes
+  goodreads:
+    base: https://www.goodreads.com
+    quotes: ${url.goodreads.base}/quotes
   pensador:
     base: https://www.pensador.com
-    populares: ${url.pensador.base}/populares
+    popular-quotes: ${url.pensador.base}/populares
+
+goodreads:
+  page-count: 15
+pensador:
+  page-count: 15

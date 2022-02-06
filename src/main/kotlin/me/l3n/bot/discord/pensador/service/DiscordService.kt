@@ -8,8 +8,8 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers.Unconfined
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import me.l3n.bot.discord.pensador.config.BotConfiguration
-import me.l3n.bot.discord.pensador.config.DiscordConfiguration
+import me.l3n.bot.discord.pensador.config.BotConfig
+import me.l3n.bot.discord.pensador.config.DiscordConfig
 import me.l3n.bot.discord.pensador.service.crawler.Quote
 import me.l3n.bot.discord.pensador.service.handler.EventHandler
 import me.l3n.bot.discord.pensador.util.getTextChannel
@@ -28,8 +28,8 @@ val ESCAPE_DISCORD_REGEX = "([*_~`>|])".toRegex()
 class DiscordService(
     private val discord: Kord,
     private val webhook: Webhook,
-    private val config: DiscordConfiguration,
-    private val botConfig: BotConfiguration,
+    private val config: DiscordConfig,
+    private val botConfig: BotConfig,
 ) {
 
     @Inject

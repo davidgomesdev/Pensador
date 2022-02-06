@@ -5,7 +5,7 @@ import io.smallrye.config.WithDefault
 
 
 @ConfigMapping(prefix = "bot")
-interface BotConfiguration {
+interface BotConfig {
 
     fun noImageUrl(): String
 

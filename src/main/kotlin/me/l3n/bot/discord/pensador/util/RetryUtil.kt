@@ -30,7 +30,7 @@ inline fun <T> retry(
     if (value.isSuccess) return value
 
     repeat(times) { i ->
-        beforeRetry(i)
+        beforeRetry(i + 1)
         value = block()
 
         if (value.isFailure)

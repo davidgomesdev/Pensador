@@ -5,11 +5,9 @@ import io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import me.l3n.bot.discord.pensador.config.BotConfiguration
+import me.l3n.bot.discord.pensador.config.BotConfig
 import me.l3n.bot.discord.pensador.service.DiscordService
 import me.l3n.bot.discord.pensador.service.crawler.CrawlerService
-import me.l3n.bot.discord.pensador.service.isValid
-import me.l3n.bot.discord.pensador.util.retry
 import org.jboss.logging.Logger
 import javax.enterprise.context.ApplicationScoped
 import javax.enterprise.inject.Instance
@@ -20,7 +18,7 @@ class PensadorScheduler(
     private val discord: DiscordService,
     crawlerInstance: Instance<CrawlerService>,
     private val log: Logger,
-    private val config: BotConfiguration,
+    private val config: BotConfig,
 ) {
 
     private val crawler: CrawlerService =
@@ -28,27 +26,7 @@ class PensadorScheduler(
 
     @Scheduled(cron = "{cron-expr}", concurrentExecution = SKIP)
     fun sendRandomQuote() = runBlocking {
-        val quote = async {
-            retry(
-                5,
-                block = {
-                    log.debug("Crawling a quote")
-
-                    val result = crawler.crawlRandomQuote(config.charLimit())
-                    log.info("Crawled a random quote")
-
-                    if (result.isValid()) Result.success(result)
-                    else {
-                        Result.failure(IllegalArgumentException("Quote not valid"))
-                    }
-                },
-                beforeRetry = { i -> log.debug("Retrying crawling a valid quote (#$i)") },
-                afterRetry = { error -> log.debug(error.message) },
-                retryExceeded = { times ->
-                    log.warn("Retry for crawling a valid quote exceeded ($times)")
-                },
-            ).getOrNull()
-        }
+        val quote = async { crawler.crawlDiscordValidQuote(config.charLimit()) }
 
         val cleanupJob = launch {
             discord.cleanupFreshQuotes()
