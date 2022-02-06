@@ -30,8 +30,7 @@ class PensadorSchedulerTest {
 
     @BeforeEach
     fun setupMocks() {
-        coEvery { crawlerMock.crawlRandomQuote(any()) }.returns(dummyQuote)
-        coEvery { crawlerMock.crawlRandomQuote() }.returns(dummyQuote)
+        coEvery { crawlerMock.crawlDiscordValidQuote(any()) }.returns(dummyQuote)
         coEvery { serviceMock.sendQuote(any()) }.returns(Unit)
         coEvery { serviceMock.cleanupFreshQuotes() }.returns(Unit)
     }
@@ -40,7 +39,7 @@ class PensadorSchedulerTest {
     fun `should crawl a quote and send it to Discord`() {
         runBlocking { scheduler.sendRandomQuote() }
 
-        coVerify(exactly = 1) { crawlerMock.crawlRandomQuote(5) }
+        coVerify(exactly = 1) { crawlerMock.crawlDiscordValidQuote(5) }
         coVerify(exactly = 1) { serviceMock.sendQuote(dummyQuote) }
     }
 }
