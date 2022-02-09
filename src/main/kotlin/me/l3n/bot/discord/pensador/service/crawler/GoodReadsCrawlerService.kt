@@ -7,14 +7,14 @@ import me.l3n.bot.discord.pensador.util.toPlainText
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
-import javax.inject.Singleton
+import javax.enterprise.context.ApplicationScoped
 
 
 private val EXTRACT_QUOTE_REGEX = "(?<=“)(.*?)(?=”)".toRegex(RegexOption.DOT_MATCHES_ALL)
 private val AUTHOR_NAME_REPLACE_REGEX = "[^A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ' .,]+|,\$".toRegex()
 
 @LookupIfProperty(name = "source", stringValue = "goodreads", lookupIfMissing = true)
-@Singleton
+@ApplicationScoped
 class GoodReadsCrawlerService(
     private val urlConfig: GoodReadsUrlConfig,
     private val config: GoodReadsConfig,

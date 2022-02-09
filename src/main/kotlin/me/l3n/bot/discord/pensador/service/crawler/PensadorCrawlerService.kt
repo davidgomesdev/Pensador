@@ -8,17 +8,15 @@ import me.l3n.bot.discord.pensador.util.toPlainText
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
-import javax.inject.Singleton
+import javax.enterprise.context.ApplicationScoped
 
 @LookupIfProperty(name = "source", stringValue = "pensador")
-@Singleton
+@ApplicationScoped
 class PensadorCrawlerService(
     private val urlConfig: PensadorUrlConfig,
     private val config: PensadorConfig,
 ) : CrawlerService() {
 
-    // Depends on page, but on the "populares" it's almost infinite...
-    // There doesn't seem a way to know exactly
     override fun getMaxPageCount(): Int = config.pageCount()
 
     override infix fun getPageUrl(page: Int): String = "${urlConfig.popularQuotes()}/$page"
