@@ -1,4 +1,7 @@
 quarkus:
+  # Needed for Mongodb
+  naming:
+    enable-jndi: true
   log:
     level: ERROR
     category:

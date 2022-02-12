@@ -26,7 +26,7 @@ class PensadorScheduler(
 
     @Scheduled(cron = "{cron-expr}", concurrentExecution = SKIP)
     fun sendRandomQuote() = runBlocking {
-        val quote = async { crawler.crawlDiscordValidQuote(config.charLimit()) }
+        val quote = async { crawler crawlUniqueQuote config.charLimit() }
 
         val cleanupJob = launch {
             discord.cleanupFreshQuotes()
@@ -34,7 +34,7 @@ class PensadorScheduler(
         }
         cleanupJob.join()
 
-        discord.sendQuote(quote.await() ?: return@runBlocking)
+        discord.sendQuote(quote.await())
         log.info("Sent a fresh quote")
     }
 }

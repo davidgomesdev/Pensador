@@ -4,8 +4,8 @@ import dev.kord.core.behavior.reply
 import dev.kord.core.entity.Message
 import dev.kord.x.emoji.Emojis
 import me.l3n.bot.discord.pensador.config.BotConfig
+import me.l3n.bot.discord.pensador.model.Quote
 import me.l3n.bot.discord.pensador.service.crawler.CrawlerService
-import me.l3n.bot.discord.pensador.service.crawler.Quote
 import me.l3n.bot.discord.pensador.service.handler.CommandHandler
 import me.l3n.bot.discord.pensador.util.success
 import org.jboss.logging.Logger
@@ -43,24 +43,20 @@ class GetQuoteCommandHandler(
         return Result.success()
     }
 
-    private suspend fun crawlQuote() = crawler.crawlDiscordValidQuote(config.charLimit())
+    private suspend fun crawlQuote() = crawler crawlValidQuote config.charLimit()
 
-    private suspend fun replyQuote(message: Message, quote: Quote?) = message.reply {
-        if (quote == null)
-            content = "Couldn't find a valid quote! ${Emojis.weary}"
-        else {
-            val quoteAuthor = quote.author
+    private suspend fun replyQuote(message: Message, quote: Quote) = message.reply {
+        val quoteAuthor = quote.author
 
-            this.embed {
-                description = quote.text
+        this.embed {
+            description = quote.text
 
-                thumbnail {
-                    this.url = quoteAuthor.imageUrl ?: ""
-                }
+            thumbnail {
+                this.url = quoteAuthor.imageUrl ?: ""
+            }
 
-                footer {
-                    this.text = quote.author.name
-                }
+            footer {
+                this.text = quote.author.name
             }
         }
     }

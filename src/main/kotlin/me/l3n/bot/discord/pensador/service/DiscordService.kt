@@ -10,7 +10,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import me.l3n.bot.discord.pensador.config.BotConfig
 import me.l3n.bot.discord.pensador.config.DiscordConfig
-import me.l3n.bot.discord.pensador.service.crawler.Quote
+import me.l3n.bot.discord.pensador.model.Quote
 import me.l3n.bot.discord.pensador.service.handler.EventHandler
 import me.l3n.bot.discord.pensador.util.getTextChannel
 import org.jboss.logging.Logger

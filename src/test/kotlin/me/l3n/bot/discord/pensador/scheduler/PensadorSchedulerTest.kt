@@ -6,10 +6,10 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import me.l3n.bot.discord.pensador.config.BotConfig
+import me.l3n.bot.discord.pensador.model.Author
+import me.l3n.bot.discord.pensador.model.Quote
 import me.l3n.bot.discord.pensador.service.DiscordService
-import me.l3n.bot.discord.pensador.service.crawler.Author
 import me.l3n.bot.discord.pensador.service.crawler.CrawlerService
-import me.l3n.bot.discord.pensador.service.crawler.Quote
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import javax.enterprise.inject.Instance
@@ -30,7 +30,7 @@ class PensadorSchedulerTest {
 
     @BeforeEach
     fun setupMocks() {
-        coEvery { crawlerMock.crawlDiscordValidQuote(any()) }.returns(dummyQuote)
+        coEvery { crawlerMock crawlUniqueQuote any() }.returns(dummyQuote)
         coEvery { serviceMock.sendQuote(any()) }.returns(Unit)
         coEvery { serviceMock.cleanupFreshQuotes() }.returns(Unit)
     }
@@ -39,7 +39,7 @@ class PensadorSchedulerTest {
     fun `should crawl a quote and send it to Discord`() {
         runBlocking { scheduler.sendRandomQuote() }
 
-        coVerify(exactly = 1) { crawlerMock.crawlDiscordValidQuote(5) }
+        coVerify(exactly = 1) { crawlerMock crawlUniqueQuote 5 }
         coVerify(exactly = 1) { serviceMock.sendQuote(dummyQuote) }
     }
 }

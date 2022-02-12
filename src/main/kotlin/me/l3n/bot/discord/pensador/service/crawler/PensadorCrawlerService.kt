@@ -4,10 +4,13 @@ import io.quarkus.arc.lookup.LookupIfProperty
 import kotlinx.coroutines.runBlocking
 import me.l3n.bot.discord.pensador.config.PensadorConfig
 import me.l3n.bot.discord.pensador.config.PensadorUrlConfig
+import me.l3n.bot.discord.pensador.model.PensadorQuote
 import me.l3n.bot.discord.pensador.util.toPlainText
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
+import org.litote.kmongo.coroutine.CoroutineCollection
+import org.litote.kmongo.eq
 import javax.enterprise.context.ApplicationScoped
 
 @LookupIfProperty(name = "source", stringValue = "pensador")
@@ -15,6 +18,7 @@ import javax.enterprise.context.ApplicationScoped
 class PensadorCrawlerService(
     private val urlConfig: PensadorUrlConfig,
     private val config: PensadorConfig,
+    private val collection: CoroutineCollection<PensadorQuote>,
 ) : CrawlerService() {
 
     override fun getMaxPageCount(): Int = config.pageCount()
@@ -25,12 +29,17 @@ class PensadorCrawlerService(
         rootHtml.getElementsByClass("thought-card")
 
     override infix fun getQuoteContent(quoteHtml: Element): String =
-        quoteHtml.getElementsByTag("p").first()?.toPlainText() ?: throw IllegalAccessError("No text")
+        quoteHtml.getElementsByTag("p").first()?.toPlainText() ?: throw IllegalArgumentException("No text")
+
+    override fun getId(quoteHtml: Element): String =
+        quoteHtml
+            .getElementsByClass("frase").first()
+            ?.id() ?: throw IllegalArgumentException("No ID")
 
     override infix fun getAuthorHtml(quoteHtml: Element): Element =
         quoteHtml
             .getElementsByClass("autor").first()
-            ?.getElementsByTag("a")?.first() ?: throw IllegalAccessError("No author")
+            ?.getElementsByTag("a")?.first() ?: throw IllegalArgumentException("No author")
 
     override infix fun getAuthorName(authorHtml: Element): String =
         authorHtml.text()
@@ -42,6 +51,13 @@ class PensadorCrawlerService(
         val topHeader = html getImgFrom "top" ?: html getImgFrom "resumo" ?: return null
 
         return topHeader.attr("src")
+    }
+
+    override suspend fun isQuoteNew(crawled: CrawledQuote): Boolean =
+        collection.findOne(PensadorQuote::id eq crawled.id) == null
+
+    override suspend fun persistToDB(crawled: CrawledQuote) {
+        collection.insertOne(PensadorQuote(crawled.id, crawled.quote))
     }
 }
 

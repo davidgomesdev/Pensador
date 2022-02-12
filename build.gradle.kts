@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.5.31"
+    kotlin("jvm") version "1.6.10"
     id("io.quarkus")
 }
 
@@ -13,6 +13,7 @@ repositories {
 val quarkusPlatformGroupId: String by project
 val quarkusPlatformArtifactId: String by project
 val quarkusPlatformVersion: String by project
+val ktorVersion: String by project
 
 dependencies {
     // Kotlin++!
@@ -22,6 +23,7 @@ dependencies {
     implementation(
         enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
     )
+    implementation("io.quarkus:quarkus-kotlin")
     implementation("io.quarkus:quarkus-scheduler")
     implementation("io.quarkus:quarkus-arc")
     implementation("io.quarkus:quarkus-config-yaml")
@@ -31,11 +33,14 @@ dependencies {
     implementation("dev.kord.x:emoji:0.5.0")
 
     // HTTP
-    implementation("io.ktor:ktor-client-core:1.6.5")
-    implementation("io.ktor:ktor-client-cio:1.6.5")
+    implementation("io.ktor:ktor-client-core:$ktorVersion")
+    implementation("io.ktor:ktor-client-cio:$ktorVersion")
 
     // Html Parser
     implementation("org.jsoup:jsoup:1.10.2")
+
+    // MongoDB
+    implementation("org.litote.kmongo:kmongo-coroutine:4.4.0")
 
     // Tests
     testImplementation("io.quarkus:quarkus-junit5")

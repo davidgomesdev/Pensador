@@ -4,8 +4,10 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.util.*
+import me.l3n.bot.discord.pensador.model.Author
+import me.l3n.bot.discord.pensador.model.Quote
 import me.l3n.bot.discord.pensador.service.isValid
-import me.l3n.bot.discord.pensador.util.retry
 import me.l3n.bot.discord.pensador.util.retryUntil
 import org.jboss.logging.Logger
 import org.jsoup.Jsoup
@@ -15,6 +17,8 @@ import org.jsoup.select.Elements
 import javax.inject.Inject
 
 
+internal data class CrawledQuote(val id: String, val quote: Quote)
+
 abstract class CrawlerService {
 
     @Inject
@@ -23,38 +27,37 @@ abstract class CrawlerService {
     @Inject
     private lateinit var http: HttpClient
 
-    suspend fun crawlDiscordValidQuote(charLimit: Int) =
-        retry(
-            5,
-            block = {
-                log.debug("Crawling a quote")
-
-                val result = crawlRandomQuote(charLimit)
-                log.info("Crawled a random quote")
-
-                if (result.isValid()) Result.success(result)
-                else {
-                    Result.failure(IllegalArgumentException("Quote not valid for discord"))
-                }
-            },
-            beforeRetry = { i -> log.debug("Retrying crawling a valid quote (#$i)") },
-            afterRetry = { error -> log.debug(error.message) },
-            retryExceeded = { times ->
-                log.warn("Retry for crawling a valid quote exceeded ($times)")
-            },
-        ).getOrNull()
-
-    suspend fun crawlRandomQuote(charLimit: Int): Quote =
+    suspend infix fun crawlUniqueQuote(charLimit: Int) =
         retryUntil(
-            block = { crawlRandomQuote() },
-            isValid = { quote -> quote.text.length > charLimit },
+            block = {
+                log.debug("Crawling a random quote")
+                crawlRandomQuote(charLimit)
+            },
+            isValid = { crawled ->
+                isQuoteNew(crawled)
+            },
+            beforeRetry = { log.debug("Retrying to crawl a valid quote") },
+            afterRetry = { log.debug("Quote is not new") },
+        ).run {
+            log.info("Crawled quote")
+
+            log.debug("Adding to database")
+            persistToDB(this)
+            log.debug("Added to database")
+
+            quote
+        }
+
+    suspend infix fun crawlValidQuote(charLimit: Int): Quote = crawlRandomQuote(charLimit).quote
+
+    private suspend fun crawlRandomQuote(charLimit: Int): CrawledQuote =
+        retryUntil(
+            block = { crawlPageRandomQuote(getRandomPage()) },
+            isValid = { crawled -> crawled.quote.text.length <= charLimit && crawled.quote.isValid() },
             beforeRetry = { log.debug("Crawled quote too large, retrying") }
         )
 
-    suspend fun crawlRandomQuote(): Quote =
-        crawlPageRandomQuote(getRandomPage())
-
-    private suspend infix fun crawlPageRandomQuote(page: Int): Quote {
+    private suspend fun crawlPageRandomQuote(page: Int): CrawledQuote {
         val pageUrl = getPageUrl(page)
         val pageHtml = parseHtml(pageUrl)
 
@@ -63,16 +66,20 @@ abstract class CrawlerService {
         return parseQuote(quotesHtml.toList().random())
     }
 
-    private suspend infix fun parseQuote(quoteHtml: Element): Quote {
+    private suspend fun parseQuote(quoteHtml: Element): CrawledQuote {
+        val id = getId(quoteHtml)
         val content = getQuoteContent(quoteHtml)
         val authorHtml = getAuthorHtml(quoteHtml)
         val authorName = getAuthorName(authorHtml).trim()
         val authorImageUrl =
             getAuthorImageUrl(authorHtml)?.takeIf { isImageUrl(it) }
 
-        return Quote(
-            Author(authorName, authorImageUrl),
-            content,
+        return CrawledQuote(
+            id,
+            Quote(
+                Author(authorName, authorImageUrl),
+                content,
+            ),
         )
     }
 
@@ -80,28 +87,36 @@ abstract class CrawlerService {
 
     protected abstract fun getMaxPageCount(): Int
 
-    abstract infix fun getPageUrl(page: Int): String
+    protected abstract fun getPageUrl(page: Int): String
 
-    protected suspend infix fun parseHtml(url: String): Document {
-        val html = http.get<String>(url)
+    protected suspend fun parseHtml(url: String): Document {
+        // Can't simply `.get<String>(url)`, because otherwise we get an "Unresolved Class" exception
+        // that occurs only when using KMongo... Don't know why
+        val html = String(http.get<HttpResponse>(url).content.toByteArray())
 
         return Jsoup.parse(html)
     }
 
-    protected abstract infix fun extractQuotesHtml(rootHtml: Document): Elements
+    protected abstract fun extractQuotesHtml(rootHtml: Document): Elements
 
-    private suspend infix fun isImageUrl(url: String) = url.let {
+    private suspend fun isImageUrl(url: String) = url.let {
         url.isNotBlank() && http.get<HttpResponse>(url).let { response ->
             response.status == HttpStatusCode.OK &&
                 response.contentType()?.match(ContentType.Image.Any) ?: false
         }
     }
 
-    protected abstract infix fun getQuoteContent(quoteHtml: Element): String
+    protected abstract fun getQuoteContent(quoteHtml: Element): String
 
-    protected abstract infix fun getAuthorHtml(quoteHtml: Element): Element
+    protected abstract fun getId(quoteHtml: Element): String
 
-    protected abstract infix fun getAuthorName(authorHtml: Element): String
+    protected abstract fun getAuthorHtml(quoteHtml: Element): Element
 
-    protected abstract infix fun getAuthorImageUrl(authorHtml: Element): String?
+    protected abstract fun getAuthorName(authorHtml: Element): String
+
+    protected abstract fun getAuthorImageUrl(authorHtml: Element): String?
+
+    internal abstract suspend fun isQuoteNew(crawled: CrawledQuote): Boolean
+
+    internal abstract suspend fun persistToDB(crawled: CrawledQuote)
 }
