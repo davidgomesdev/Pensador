@@ -4,7 +4,6 @@ import io.quarkus.arc.lookup.LookupIfProperty
 import me.l3n.bot.discord.pensador.config.GoodReadsConfig
 import me.l3n.bot.discord.pensador.config.GoodReadsUrlConfig
 import me.l3n.bot.discord.pensador.model.GoodReadsQuote
-import me.l3n.bot.discord.pensador.util.toPlainText
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
@@ -33,7 +32,7 @@ class GoodReadsCrawlerService(
 
     override infix fun getQuoteContent(quoteHtml: Element): String =
         extractQuote(
-            quoteHtml.getElementsByClass("quoteText").first()?.toPlainText()
+            quoteHtml.getElementsByClass("quoteText").first()?.text()
                 ?: throw IllegalArgumentException("No quote text")
         )
 
