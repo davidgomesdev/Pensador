@@ -7,6 +7,7 @@ import io.ktor.http.*
 import io.ktor.util.*
 import me.l3n.bot.discord.pensador.model.Author
 import me.l3n.bot.discord.pensador.model.Quote
+import me.l3n.bot.discord.pensador.repository.QuoteRepository
 import me.l3n.bot.discord.pensador.service.isValid
 import me.l3n.bot.discord.pensador.util.retryUntil
 import org.jboss.logging.Logger
@@ -17,7 +18,7 @@ import org.jsoup.select.Elements
 import javax.inject.Inject
 
 
-internal data class CrawledQuote(val id: String, val quote: Quote)
+data class CrawledQuote(val id: String, val quote: Quote)
 
 abstract class CrawlerService {
 
@@ -27,6 +28,9 @@ abstract class CrawlerService {
     @Inject
     private lateinit var http: HttpClient
 
+    @Inject
+    private lateinit var quoteRepo: QuoteRepository
+
     suspend infix fun crawlUniqueQuote(charLimit: Int) =
         retryUntil(
             block = {
@@ -34,7 +38,7 @@ abstract class CrawlerService {
                 crawlRandomQuote(charLimit)
             },
             isValid = { crawled ->
-                isQuoteNew(crawled)
+                quoteRepo.isQuoteNew(crawled)
             },
             beforeRetry = { log.debug("Retrying to crawl a valid quote") },
             afterRetry = { log.debug("Quote is not new") },
@@ -42,7 +46,7 @@ abstract class CrawlerService {
             log.info("Crawled quote")
 
             log.debug("Adding to database")
-            persistToDB(this)
+            quoteRepo.save(this)
             log.debug("Added to database")
 
             quote
@@ -115,8 +119,4 @@ abstract class CrawlerService {
     protected abstract fun getAuthorName(authorHtml: Element): String
 
     protected abstract fun getAuthorImageUrl(authorHtml: Element): String?
-
-    internal abstract suspend fun isQuoteNew(crawled: CrawledQuote): Boolean
-
-    internal abstract suspend fun persistToDB(crawled: CrawledQuote)
 }

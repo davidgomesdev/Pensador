@@ -3,12 +3,9 @@ package me.l3n.bot.discord.pensador.service.crawler
 import io.quarkus.arc.lookup.LookupIfProperty
 import me.l3n.bot.discord.pensador.config.GoodReadsConfig
 import me.l3n.bot.discord.pensador.config.GoodReadsUrlConfig
-import me.l3n.bot.discord.pensador.model.GoodReadsQuote
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
-import org.litote.kmongo.coroutine.CoroutineCollection
-import org.litote.kmongo.eq
 import javax.enterprise.context.ApplicationScoped
 
 
@@ -20,7 +17,6 @@ private val AUTHOR_NAME_REPLACE_REGEX = "[^A-Za-záàâãéèêíïóôõöúç�
 class GoodReadsCrawlerService(
     private val urlConfig: GoodReadsUrlConfig,
     private val config: GoodReadsConfig,
-    private val collection: CoroutineCollection<GoodReadsQuote>,
 ) : CrawlerService() {
 
     override fun getMaxPageCount(): Int = config.pageCount()
@@ -54,13 +50,6 @@ class GoodReadsCrawlerService(
     override infix fun getAuthorImageUrl(authorHtml: Element): String? =
         authorHtml.getElementsByTag("img")
             .attr("src")
-
-    override suspend fun isQuoteNew(crawled: CrawledQuote): Boolean =
-        collection.findOne(GoodReadsQuote::id eq crawled.id) == null
-
-    override suspend fun persistToDB(crawled: CrawledQuote) {
-        collection.insertOne(GoodReadsQuote(crawled.id, crawled.quote))
-    }
 
     private infix fun extractQuote(text: String) = EXTRACT_QUOTE_REGEX.find(text)?.value ?: ""
 

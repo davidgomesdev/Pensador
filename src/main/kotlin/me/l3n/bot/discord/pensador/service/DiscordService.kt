@@ -2,6 +2,8 @@ package me.l3n.bot.discord.pensador.service
 
 import dev.kord.core.Kord
 import dev.kord.core.behavior.execute
+import dev.kord.core.behavior.reply
+import dev.kord.core.entity.Message
 import dev.kord.core.entity.Webhook
 import io.quarkus.runtime.Startup
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -65,11 +67,27 @@ class DiscordService(
         webhook.execute(config.webhook().token()) {
             avatarUrl = quote.author.imageUrl ?: botConfig.noImageUrl()
             username = quote.author.name
-            content = quote.text.escapeForDiscord().trim()
+            content = quote.text.escapeForDiscord()
         }
     }
 }
 
-fun String.escapeForDiscord(): String = replace(ESCAPE_DISCORD_REGEX, "\\\\$1")
+fun String.escapeForDiscord(): String = trim().replace(ESCAPE_DISCORD_REGEX, "\\\\$1")
 
-fun Quote.isValid() = text.escapeForDiscord().trim().length < 2_000 && author.name.length < 80
+fun Quote.isValid() = text.escapeForDiscord().length < 2_000 && author.name.length < 80
+
+suspend fun Message.replyQuote(quote: Quote) = reply {
+    val quoteAuthor = quote.author
+
+    this.embed {
+        description = quote.text
+
+        thumbnail {
+            this.url = quoteAuthor.imageUrl ?: ""
+        }
+
+        footer {
+            this.text = quote.author.name
+        }
+    }
+}

@@ -1,8 +1,8 @@
 package me.l3n.bot.discord.pensador.producer
 
+import io.quarkus.arc.lookup.LookupIfProperty
 import me.l3n.bot.discord.pensador.config.MongoConfig
-import me.l3n.bot.discord.pensador.model.GoodReadsQuote
-import me.l3n.bot.discord.pensador.model.PensadorQuote
+import me.l3n.bot.discord.pensador.model.MongoQuote
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo
@@ -25,11 +25,13 @@ class CollectionProducer(
     private val database: CoroutineDatabase,
 ) {
 
+    @LookupIfProperty(name = "source", stringValue = "pensador")
     @Singleton
     fun pensadorCollection() =
-        database.getCollection<PensadorQuote>("pensadorQuotes")
+        database.getCollection<MongoQuote>("pensadorQuotes")
 
+    @LookupIfProperty(name = "source", stringValue = "goodreads", lookupIfMissing = true)
     @Singleton
     fun goodreadsCollection() =
-        database.getCollection<GoodReadsQuote>("goodreadsQuotes")
+        database.getCollection<MongoQuote>("goodreadsQuotes")
 }
