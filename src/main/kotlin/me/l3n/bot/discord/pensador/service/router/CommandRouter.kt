@@ -23,7 +23,7 @@ class CommandRouter(
         val commandName = content.commandName
         val args = content.args
 
-        val handler = handlers.firstOrNull { it.name == commandName }
+        val handler = handlers.firstOrNull { it.name.equals(commandName, true) }
 
         if (handler == null) {
             log.info("No command handler for '$commandName'")
