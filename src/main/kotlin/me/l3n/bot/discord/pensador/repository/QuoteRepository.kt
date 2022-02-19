@@ -47,15 +47,15 @@ class QuoteRepositoryImpl(
     override suspend fun favoriteLast(userId: Long) {
         val quote = getCurrentDocument() ?: throw IllegalStateException("There are no quotes")
 
-        if (!quote.favoriteIds.contains(userId)) {
-            quote.favoriteIds.add(userId)
+        if (!quote.favoriteUserIds.contains(userId)) {
+            quote.favoriteUserIds.add(userId)
             collection.updateOne(quote)
         }
     }
 
     override suspend fun getFavorites(userId: Long): Flow<Quote> {
         val favorites = collection.find(
-            MongoQuote::favoriteIds contains userId
+            MongoQuote::favoriteUserIds contains userId
         ).sort(
             descending(MongoQuote::_id)
         )
@@ -66,8 +66,8 @@ class QuoteRepositoryImpl(
     override suspend fun unfavoriteLast(userId: Long) {
         val quote = getCurrentDocument() ?: throw IllegalStateException("There are no quotes")
 
-        if (quote.favoriteIds.contains(userId)) {
-            quote.favoriteIds.remove(userId)
+        if (quote.favoriteUserIds.contains(userId)) {
+            quote.favoriteUserIds.remove(userId)
             collection.updateOne(quote)
         }
     }
