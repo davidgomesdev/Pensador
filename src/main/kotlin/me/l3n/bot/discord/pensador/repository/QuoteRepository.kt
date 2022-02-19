@@ -1,5 +1,7 @@
 package me.l3n.bot.discord.pensador.repository
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import me.l3n.bot.discord.pensador.model.MongoQuote
 import me.l3n.bot.discord.pensador.model.Quote
 import me.l3n.bot.discord.pensador.service.crawler.CrawledQuote
@@ -18,7 +20,7 @@ interface QuoteRepository {
 
     suspend fun save(crawled: CrawledQuote)
 
-    suspend fun getFavorite(userId: Long, index: Int = 0): Quote?
+    suspend fun getFavorites(userId: Long): Flow<Quote>
 
     suspend fun favoriteLast(userId: Long)
 
@@ -51,14 +53,14 @@ class QuoteRepositoryImpl(
         }
     }
 
-    override suspend fun getFavorite(userId: Long, index: Int): Quote? {
-        val favorite = collection.find(
+    override suspend fun getFavorites(userId: Long): Flow<Quote> {
+        val favorites = collection.find(
             MongoQuote::favoriteIds contains userId
         ).sort(
             descending(MongoQuote::_id)
-        ).skip(index).first()
+        )
 
-        return favorite?.quote
+        return favorites.toFlow().map { it.quote }
     }
 
     override suspend fun unfavoriteLast(userId: Long) {

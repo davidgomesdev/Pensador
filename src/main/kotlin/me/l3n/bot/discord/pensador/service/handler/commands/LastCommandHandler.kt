@@ -2,6 +2,7 @@ package me.l3n.bot.discord.pensador.service.handler.commands
 
 import dev.kord.core.behavior.reply
 import dev.kord.core.entity.Message
+import dev.kord.core.entity.User
 import dev.kord.x.emoji.Emojis
 import me.l3n.bot.discord.pensador.repository.QuoteRepository
 import me.l3n.bot.discord.pensador.service.handler.CommandHandler
@@ -21,11 +22,10 @@ class LastCommandHandler(
     @Inject
     private lateinit var log: Logger
 
-    override suspend fun handle(args: List<String>, message: Message): Result<Unit> {
-        val author = message.author ?: return Result.failure(IllegalArgumentException("No author!"))
+    override suspend fun handle(args: List<String>, message: Message, user: User): Result<Unit> {
         val searchingMessage = message.reply { content = "Going back in time... ${Emojis.europeanCastle}" }
 
-        log.debug("Getting history for '${author.username}'")
+        log.debug("Getting history for '${user.username}'")
 
         val lastQuote = quoteRepository.getLast()
             ?: return Result.failure(IllegalStateException("Last command requested with no quotes sent yet!"))
