@@ -1,5 +1,6 @@
 package me.l3n.bot.discord.pensador.scheduler
 
+import dev.kord.common.annotation.KordPreview
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import javax.enterprise.inject.Instance
 
+@KordPreview
 class PensadorSchedulerTest {
 
     private val dummyAuthor = Author("Fernando Person", "http://image.l3n/fernando_person.png")
@@ -31,7 +33,7 @@ class PensadorSchedulerTest {
     @BeforeEach
     fun setupMocks() {
         coEvery { crawlerMock crawlUniqueQuote any() }.returns(dummyQuote)
-        coEvery { serviceMock.sendQuote(any()) }.returns(Unit)
+        coEvery { serviceMock.sendChannelQuote(any()) }.returns(Unit)
         coEvery { serviceMock.cleanupFreshQuotes() }.returns(Unit)
     }
 
@@ -40,6 +42,6 @@ class PensadorSchedulerTest {
         runBlocking { scheduler.sendRandomQuote() }
 
         coVerify(exactly = 1) { crawlerMock crawlUniqueQuote 5 }
-        coVerify(exactly = 1) { serviceMock.sendQuote(dummyQuote) }
+        coVerify(exactly = 1) { serviceMock.sendChannelQuote(dummyQuote) }
     }
 }

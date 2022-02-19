@@ -1,5 +1,6 @@
 package me.l3n.bot.discord.pensador.scheduler
 
+import dev.kord.common.annotation.KordPreview
 import io.quarkus.scheduler.Scheduled
 import io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP
 import kotlinx.coroutines.async
@@ -24,6 +25,7 @@ class PensadorScheduler(
     private val crawler: CrawlerService =
         crawlerInstance.get() ?: throw IllegalArgumentException("Invalid source specified in config")
 
+    @KordPreview
     @Scheduled(cron = "{cron-expr}", concurrentExecution = SKIP)
     fun sendRandomQuote() = runBlocking {
         val quote = async { crawler crawlUniqueQuote config.charLimit() }
@@ -34,7 +36,7 @@ class PensadorScheduler(
         }
         cleanupJob.join()
 
-        discord.sendQuote(quote.await())
+        discord.sendChannelQuote(quote.await())
         log.info("Sent a fresh quote")
     }
 }

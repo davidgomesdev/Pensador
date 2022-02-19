@@ -36,7 +36,7 @@ class MessageCreateEventHandler(
         if (dmChannel == null)
             log.debug("Not allowed to reply")
         else {
-            val result = commandRouter routeMessage message
+            val result = commandRouter.routeMessage(message, author)
 
             if (result.isSuccess) {
                 log.info("Command of '$username' routed successfully")

@@ -4,43 +4,40 @@ import dev.kord.core.behavior.reply
 import dev.kord.core.entity.Message
 import dev.kord.core.entity.User
 import dev.kord.x.emoji.Emojis
-import me.l3n.bot.discord.pensador.config.BotConfig
-import me.l3n.bot.discord.pensador.service.crawler.CrawlerService
+import kotlinx.coroutines.flow.lastOrNull
+import me.l3n.bot.discord.pensador.repository.QuoteRepository
 import me.l3n.bot.discord.pensador.service.handler.CommandHandler
 import me.l3n.bot.discord.pensador.service.replyQuote
 import me.l3n.bot.discord.pensador.util.success
 import org.jboss.logging.Logger
 import javax.enterprise.context.ApplicationScoped
-import javax.enterprise.inject.Instance
 import javax.inject.Inject
 
-
 @ApplicationScoped
-class GetQuoteCommandHandler(
-    crawlerInstance: Instance<CrawlerService>,
-    private val config: BotConfig,
+class FavoritesCommandHandler(
+    private val quoteRepository: QuoteRepository
 ) : CommandHandler() {
 
-    private val crawler: CrawlerService =
-        crawlerInstance.get() ?: throw IllegalArgumentException("Invalid source specified in config")
-
-    override val name = "q"
+    override val name = "favorites"
 
     @Inject
     private lateinit var log: Logger
 
     override suspend fun handle(args: List<String>, message: Message, user: User): Result<Unit> {
-        val searchingMessage = message.reply { content = "Searching... ${Emojis.mag}" }
+        val searchingMessage =
+            message.reply { content = "Going back to the wonderland... ${Emojis.smilingFaceWith3Hearts}" }
 
-        log.debug("Crawling quote for '${user.username}'")
+        log.debug("Getting last favorite for '${user.username}'")
 
-        val quote = crawlQuote()
+        val lastFavorites = quoteRepository.getFavorites(user.id.value)
 
         searchingMessage.delete()
-        message.replyQuote(quote)
+
+        lastFavorites.collect { quote -> message.replyQuote(quote) }
+
+        if (lastFavorites.lastOrNull() == null)
+            message.reply { content = "You've got nothing ${Emojis.brokenHeart}" }
 
         return Result.success()
     }
-
-    private suspend fun crawlQuote() = crawler crawlValidQuote config.charLimit()
 }
