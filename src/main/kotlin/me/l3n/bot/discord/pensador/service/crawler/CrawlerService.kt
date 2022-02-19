@@ -22,8 +22,7 @@ data class CrawledQuote(val id: String, val quote: Quote)
 
 abstract class CrawlerService {
 
-    @Inject
-    private lateinit var log: Logger
+    private val log = Logger.getLogger(javaClass)
 
     @Inject
     private lateinit var http: HttpClient

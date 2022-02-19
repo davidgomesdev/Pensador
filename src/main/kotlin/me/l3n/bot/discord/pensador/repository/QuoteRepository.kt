@@ -3,6 +3,7 @@ package me.l3n.bot.discord.pensador.repository
 import me.l3n.bot.discord.pensador.model.MongoQuote
 import me.l3n.bot.discord.pensador.model.Quote
 import me.l3n.bot.discord.pensador.service.crawler.CrawledQuote
+import org.litote.kmongo.contains
 import org.litote.kmongo.coroutine.CoroutineCollection
 import org.litote.kmongo.coroutine.updateOne
 import org.litote.kmongo.descending
@@ -16,6 +17,8 @@ interface QuoteRepository {
     suspend fun exists(crawled: CrawledQuote): Boolean
 
     suspend fun save(crawled: CrawledQuote)
+
+    suspend fun getFavorite(userId: Long, index: Int = 0): Quote?
 
     suspend fun favoriteLast(userId: Long)
 
@@ -46,6 +49,16 @@ class QuoteRepositoryImpl(
             quote.favoriteIds.add(userId)
             collection.updateOne(quote)
         }
+    }
+
+    override suspend fun getFavorite(userId: Long, index: Int): Quote? {
+        val favorite = collection.find(
+            MongoQuote::favoriteIds contains userId
+        ).sort(
+            descending(MongoQuote::_id)
+        ).skip(index).first()
+
+        return favorite?.quote
     }
 
     override suspend fun unfavoriteLast(userId: Long) {
