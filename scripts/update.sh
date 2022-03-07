@@ -13,7 +13,7 @@ function update() {
   echo
   echo "# Stopping the process..."
 
-  #bash scripts/kill.sh || exit 1
+  bash scripts/kill.sh || exit 1
 
   echo
   echo "# Deleting current version"
@@ -32,6 +32,7 @@ if [ -f current_package.md5 ]; then
   if md5sum -c current_package.md5 >/dev/null 2>&1; then
     echo "App already updated"
     echo
+    exit 0
   else
     echo "Outdated! Updating..."
     update
@@ -42,3 +43,5 @@ else
 fi
 
 echo "* Update complete *"
+
+bash scripts/run.sh
