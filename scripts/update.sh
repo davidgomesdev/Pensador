@@ -11,8 +11,9 @@ echo "# Checking if newer"
 
 function update() {
   echo
-  echo "# Stopping the process..."
+  echo "# Updating"
 
+  echo
   bash scripts/kill.sh || exit 1
 
   echo
@@ -34,13 +35,13 @@ if [ -f current_package.md5 ]; then
     echo
     exit 0
   else
-    echo "Outdated! Updating..."
-    update
+    echo "Outdated!"
   fi
 else
   echo "There's no hash of current, updating..."
-  update
 fi
+
+update
 
 echo "* Update complete *"
 
