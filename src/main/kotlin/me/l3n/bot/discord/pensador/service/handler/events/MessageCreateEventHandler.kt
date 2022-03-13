@@ -1,6 +1,7 @@
 package me.l3n.bot.discord.pensador.service.handler.events
 
 import dev.kord.core.Kord
+import dev.kord.core.behavior.channel.withTyping
 import dev.kord.core.behavior.reply
 import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.x.emoji.Emojis
@@ -36,20 +37,22 @@ class MessageCreateEventHandler(
         if (dmChannel == null)
             log.debug("Not allowed to reply")
         else {
-            val result = commandRouter.routeMessage(message, author)
+            dmChannel.withTyping {
+                val result = commandRouter.routeMessage(message, author)
 
-            if (result.isSuccess) {
-                log.info("Command of '$username' routed successfully")
-            } else {
-                val error = result.exceptionOrNull() ?: return@handler
-                val response = when (error) {
-                    is IllegalArgumentException -> "Command not found ${Emojis.frowning2}"
-                    is IllegalStateException -> "Command not working! ${Emojis.worried}"
-                    else -> "Internal error ${Emojis.confused}"
-                }
+                if (result.isSuccess) {
+                    log.info("Command of '$username' routed successfully")
+                } else {
+                    val error = result.exceptionOrNull() ?: return@handler
+                    val response = when (error) {
+                        is IllegalArgumentException -> "Command not found ${Emojis.frowning2}"
+                        is IllegalStateException -> "Command not working! ${Emojis.worried}"
+                        else -> "Internal error ${Emojis.confused}"
+                    }
 
-                message.reply {
-                    content = response
+                    message.reply {
+                        content = response
+                    }
                 }
             }
         }
