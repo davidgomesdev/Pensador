@@ -1,6 +1,6 @@
 package me.l3n.bot.discord.pensador.util
 
-
+// Inspired by `Flow.retry`
 inline fun <T> retryUntil(
     block: () -> T,
     isValid: (T) -> Boolean,

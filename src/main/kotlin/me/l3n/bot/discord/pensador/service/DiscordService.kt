@@ -10,6 +10,7 @@ import dev.kord.core.event.message.ReactionAddEvent
 import dev.kord.core.event.message.ReactionRemoveEvent
 import dev.kord.core.live.live
 import dev.kord.core.live.on
+import dev.kord.rest.builder.message.MessageCreateBuilder
 import dev.kord.x.emoji.Emojis
 import dev.kord.x.emoji.toReaction
 import io.quarkus.runtime.Startup
@@ -99,7 +100,9 @@ fun String.escapeForDiscord(): String = trim().replace(ESCAPE_DISCORD_REGEX, "\\
 
 fun Quote.isValid() = text.escapeForDiscord().length < 2_000 && author.name.length < 80
 
-suspend fun Message.replyQuote(quote: Quote) = reply {
+suspend fun Message.replyQuote(quote: Quote) = reply(createMessageWithEmbed(quote))
+
+fun createMessageWithEmbed(quote: Quote): MessageCreateBuilder.() -> Unit = {
     val quoteAuthor = quote.author
 
     this.embed {
