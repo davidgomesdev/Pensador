@@ -18,7 +18,7 @@ class PensadorCrawlerService(
 
     override fun getMaxPageCount(): Int = config.pageCount()
 
-    override infix fun getPageUrl(page: Int): String = "${urlConfig.popularQuotes()}/$page"
+    override infix fun getPageUrl(page: Int): String = "${urlConfig.quotes()}/$page"
 
     override infix fun extractQuotesHtml(rootHtml: Document): Elements =
         rootHtml.getElementsByClass("thought-card")

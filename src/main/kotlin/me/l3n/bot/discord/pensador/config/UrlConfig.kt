@@ -17,7 +17,7 @@ interface GoodReadsUrlConfig {
 
 interface PensadorUrlConfig {
     fun base(): String
-    fun popularQuotes(): String
+    fun quotes(): String
 }
 
 @ApplicationScoped

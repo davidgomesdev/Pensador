@@ -24,18 +24,18 @@ class FavoritesCommandHandler(
     @Inject
     private lateinit var log: Logger
 
-    override suspend fun handle(args: List<String>, context: CommandContext): Result<Unit> {
-        log.debug("Getting favorite quotes of '${context.user.username}'")
+    override suspend fun handle(args: List<String>, context: CommandContext): Result<Unit> = context.run {
+        log.debug("Getting favorite quotes of '${user.username}'")
 
-        val lastFavorites = quoteRepository.getFavorites(context.user.id.value)
+        val lastFavorites = quoteRepository.getFavorites(user.id.value)
 
         lastFavorites
             .map(::createMessageWithEmbed)
-            .collect { context.channel.createMessage(it) }
+            .collect { channel.createMessage(it) }
 
         if (lastFavorites.lastOrNull() == null)
-            context.message.reply { content = "You've got nothing ${Emojis.brokenHeart}" }
+            message.reply { content = "You've got nothing ${Emojis.brokenHeart}" }
 
-        return Result.success()
+        return@run Result.success()
     }
 }

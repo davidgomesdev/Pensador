@@ -19,13 +19,13 @@ class LastCommandHandler(
     @Inject
     private lateinit var log: Logger
 
-    override suspend fun handle(args: List<String>, context: CommandContext): Result<Unit> {
+    override suspend fun handle(args: List<String>, context: CommandContext): Result<Unit> = context.run {
         log.debug("Getting history for '${context.user.username}'")
 
         val lastQuote = quoteRepository.getLast()
             ?: return Result.failure(IllegalStateException("Last command requested with no quotes sent yet!"))
 
-        context.message.replyQuote(lastQuote)
+        message.replyQuote(lastQuote)
 
         return Result.success()
     }

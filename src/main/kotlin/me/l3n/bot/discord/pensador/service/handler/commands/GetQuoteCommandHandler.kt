@@ -26,10 +26,10 @@ class GetQuoteCommandHandler(
     @Inject
     private lateinit var log: Logger
 
-    override suspend fun handle(args: List<String>, context: CommandContext): Result<Unit> {
+    override suspend fun handle(args: List<String>, context: CommandContext): Result<Unit> = context.run {
         log.debug("Crawling quote for '${context.user.username}'")
 
-        context.message.replyQuote(crawlQuote())
+        message.replyQuote(crawlQuote())
 
         return Result.success()
     }
