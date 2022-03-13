@@ -1,6 +1,7 @@
 #!/bin/bash
 
 TEMP_PACKAGE_PATH="/tmp/pensador_quarkusPackage.zip"
+MODE="$1"
 
 echo "# Downloading the latest"
 echo
@@ -11,9 +12,8 @@ echo "# Checking if newer"
 
 function update() {
   echo
-  echo "# Updating"
+  echo "# Stopping the process..."
 
-  echo
   bash scripts/kill.sh || exit 1
 
   echo
@@ -33,15 +33,19 @@ if [ -f current_package.md5 ]; then
   if md5sum -c current_package.md5 >/dev/null 2>&1; then
     echo "App already updated"
     echo
-    exit 0
+
+    # Only in reboot is the run needed when updated
+    if [ "$MODE" != "reboot" ]; then
+      exit 0
+    fi
   else
-    echo "Outdated!"
+    echo "Outdated! Updating..."
+    update
   fi
 else
   echo "There's no hash of current, updating..."
+  update
 fi
-
-update
 
 echo "* Update complete *"
 

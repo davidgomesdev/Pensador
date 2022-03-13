@@ -34,6 +34,6 @@ url:
     popular-quotes: ${url.pensador.base}/populares
 
 goodreads:
-  page-count: 15
+  page-count: 25
 pensador:
   page-count: 15
