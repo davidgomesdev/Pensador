@@ -9,8 +9,8 @@ import kotlinx.coroutines.runBlocking
 import me.l3n.bot.discord.pensador.config.BotConfig
 import me.l3n.bot.discord.pensador.model.Author
 import me.l3n.bot.discord.pensador.model.Quote
-import me.l3n.bot.discord.pensador.service.DiscordService
 import me.l3n.bot.discord.pensador.service.crawler.CrawlerService
+import me.l3n.bot.discord.pensador.service.discord.DiscordService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import javax.enterprise.inject.Instance

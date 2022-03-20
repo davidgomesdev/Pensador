@@ -1,4 +1,4 @@
-package me.l3n.bot.discord.pensador.service.handler.commands
+package me.l3n.bot.discord.pensador.service.discord.handler.commands
 
 import dev.kord.core.behavior.channel.createMessage
 import dev.kord.core.behavior.reply
@@ -6,9 +6,9 @@ import dev.kord.x.emoji.Emojis
 import kotlinx.coroutines.flow.lastOrNull
 import kotlinx.coroutines.flow.map
 import me.l3n.bot.discord.pensador.repository.QuoteRepository
-import me.l3n.bot.discord.pensador.service.createMessageWithEmbed
-import me.l3n.bot.discord.pensador.service.handler.CommandContext
-import me.l3n.bot.discord.pensador.service.handler.CommandHandler
+import me.l3n.bot.discord.pensador.service.discord.createMessageWithEmbed
+import me.l3n.bot.discord.pensador.service.discord.handler.CommandContext
+import me.l3n.bot.discord.pensador.service.discord.handler.CommandHandler
 import me.l3n.bot.discord.pensador.util.success
 import org.jboss.logging.Logger
 import javax.enterprise.context.ApplicationScoped

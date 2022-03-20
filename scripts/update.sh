@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env
 
 TEMP_PACKAGE_PATH="/tmp/pensador_quarkusPackage.zip"
 MODE="$1"

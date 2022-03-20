@@ -8,7 +8,7 @@ import io.ktor.util.*
 import me.l3n.bot.discord.pensador.model.Author
 import me.l3n.bot.discord.pensador.model.Quote
 import me.l3n.bot.discord.pensador.repository.QuoteRepository
-import me.l3n.bot.discord.pensador.service.isValid
+import me.l3n.bot.discord.pensador.service.discord.isValid
 import me.l3n.bot.discord.pensador.util.retryUntil
 import org.jboss.logging.Logger
 import org.jsoup.Jsoup

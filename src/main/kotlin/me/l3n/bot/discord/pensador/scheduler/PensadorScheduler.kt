@@ -7,8 +7,8 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.l3n.bot.discord.pensador.config.BotConfig
-import me.l3n.bot.discord.pensador.service.DiscordService
 import me.l3n.bot.discord.pensador.service.crawler.CrawlerService
+import me.l3n.bot.discord.pensador.service.discord.DiscordService
 import org.jboss.logging.Logger
 import javax.enterprise.context.ApplicationScoped
 import javax.enterprise.inject.Instance

@@ -1,4 +1,4 @@
-package me.l3n.bot.discord.pensador.service.handler
+package me.l3n.bot.discord.pensador.service.discord.handler
 
 import dev.kord.core.entity.Message
 import dev.kord.core.entity.User

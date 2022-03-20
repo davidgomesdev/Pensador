@@ -1,11 +1,13 @@
-package me.l3n.bot.discord.pensador.service
+package me.l3n.bot.discord.pensador.service.discord
 
 import dev.kord.common.annotation.KordPreview
 import dev.kord.core.Kord
+import dev.kord.core.behavior.channel.createMessage
 import dev.kord.core.behavior.execute
 import dev.kord.core.behavior.reply
 import dev.kord.core.entity.Message
 import dev.kord.core.entity.Webhook
+import dev.kord.core.entity.channel.TextChannel
 import dev.kord.core.event.message.ReactionAddEvent
 import dev.kord.core.event.message.ReactionRemoveEvent
 import dev.kord.core.live.live
@@ -22,9 +24,8 @@ import me.l3n.bot.discord.pensador.config.BotConfig
 import me.l3n.bot.discord.pensador.config.DiscordConfig
 import me.l3n.bot.discord.pensador.model.Quote
 import me.l3n.bot.discord.pensador.repository.QuoteRepository
-import me.l3n.bot.discord.pensador.service.handler.EventHandler
-import me.l3n.bot.discord.pensador.util.getTextChannel
-import me.l3n.bot.discord.pensador.util.isNotMe
+import me.l3n.bot.discord.pensador.service.discord.handler.EventHandler
+import me.l3n.bot.discord.pensador.service.discord.util.isNotMe
 import org.jboss.logging.Logger
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
@@ -43,14 +44,26 @@ class DiscordService(
     private val webhook: Webhook,
     private val config: DiscordConfig,
     private val botConfig: BotConfig,
-    private val quoteRepository: QuoteRepository,
+    private val quoteRepository: QuoteRepository
 ) {
 
     @Inject
     private lateinit var log: Logger
 
     @Inject
+    private lateinit var infoChannel: TextChannel
+
+    @Inject
     private lateinit var eventHandlers: Instance<EventHandler<*>>
+
+    private val channelMessageType: ChannelMessageType = when (botConfig.channelMessageType().lowercase()) {
+        "webhook" -> ChannelMessageType.Webhook
+        "embed" -> ChannelMessageType.Embed
+        else -> {
+            log.warn("Channel message type provided is invalid, defaulting to webhook")
+            ChannelMessageType.Webhook
+        }
+    }
 
     @DelicateCoroutinesApi
     @PostConstruct
@@ -73,27 +86,40 @@ class DiscordService(
     }
 
     suspend fun cleanupFreshQuotes() =
-        discord.getTextChannel(config.channelId()).messages.collect { msg -> msg.delete() }
+        infoChannel.messages.collect { msg -> msg.delete() }
 
     @KordPreview
     suspend infix fun sendChannelQuote(quote: Quote) {
-        val message = webhook.execute(config.webhook().token()) {
+        val message = when (channelMessageType) {
+            ChannelMessageType.Webhook -> sendAsWebhook(quote)
+            ChannelMessageType.Embed -> infoChannel.createMessage(createMessageWithEmbed(quote))
+        }
+
+        handleFavorites(message)
+    }
+
+    @KordPreview
+    private suspend fun handleFavorites(message: Message) = with(message) {
+        addReaction(FAVORITE_EMOJI)
+
+        with(live()) {
+            on<ReactionAddEvent> { event ->
+                if (event.emoji == FAVORITE_EMOJI && discord isNotMe event.user)
+                    quoteRepository.favoriteLast(event.userId.value)
+            }
+            on<ReactionRemoveEvent> { event ->
+                if (event.emoji == FAVORITE_EMOJI && discord isNotMe event.user)
+                    quoteRepository.unfavoriteLast(event.userId.value)
+            }
+        }
+    }
+
+    private suspend fun sendAsWebhook(quote: Quote): Message =
+        webhook.execute(config.webhook().token()) {
             avatarUrl = quote.author.imageUrl ?: botConfig.noImageUrl()
             username = quote.author.name
             content = quote.text.escapeForDiscord()
         }
-
-        message.addReaction(FAVORITE_EMOJI)
-
-        message.live().on<ReactionAddEvent> { event ->
-            if (event.emoji == FAVORITE_EMOJI && discord isNotMe event.user)
-                quoteRepository.favoriteLast(event.userId.value)
-        }
-        message.live().on<ReactionRemoveEvent> { event ->
-            if (event.emoji == FAVORITE_EMOJI && discord isNotMe event.user)
-                quoteRepository.unfavoriteLast(event.userId.value)
-        }
-    }
 }
 
 fun String.escapeForDiscord(): String = trim().replace(ESCAPE_DISCORD_REGEX, "\\\\$1")
@@ -116,4 +142,8 @@ fun createMessageWithEmbed(quote: Quote): MessageCreateBuilder.() -> Unit = {
             this.text = quote.author.name
         }
     }
+}
+
+enum class ChannelMessageType {
+    Webhook, Embed
 }

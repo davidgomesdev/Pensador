@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env
 
 # Adapted from https://askubuntu.com/questions/3299/how-to-run-cron-job-when-network-is-up
 

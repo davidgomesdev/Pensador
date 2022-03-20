@@ -1,7 +1,7 @@
-package me.l3n.bot.discord.pensador.service.handler.events
+package me.l3n.bot.discord.pensador.service.discord.handler.events
 
 import dev.kord.core.event.gateway.ReadyEvent
-import me.l3n.bot.discord.pensador.service.handler.EventHandler
+import me.l3n.bot.discord.pensador.service.discord.handler.EventHandler
 import org.jboss.logging.Logger
 import javax.inject.Inject
 import javax.inject.Singleton

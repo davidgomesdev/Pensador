@@ -1,4 +1,4 @@
-package me.l3n.bot.discord.pensador.util
+package me.l3n.bot.discord.pensador.service.discord.util
 
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord

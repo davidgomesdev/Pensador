@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env
 
 bash scripts/retry_check_network.sh || exit 1
 

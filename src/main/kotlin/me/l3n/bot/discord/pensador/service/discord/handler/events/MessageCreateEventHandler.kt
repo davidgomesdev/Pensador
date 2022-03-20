@@ -1,12 +1,12 @@
-package me.l3n.bot.discord.pensador.service.handler.events
+package me.l3n.bot.discord.pensador.service.discord.handler.events
 
 import dev.kord.core.Kord
 import dev.kord.core.behavior.channel.withTyping
 import dev.kord.core.behavior.reply
 import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.x.emoji.Emojis
-import me.l3n.bot.discord.pensador.service.handler.EventHandler
-import me.l3n.bot.discord.pensador.service.router.CommandRouter
+import me.l3n.bot.discord.pensador.service.discord.handler.EventHandler
+import me.l3n.bot.discord.pensador.service.discord.router.CommandRouter
 import org.jboss.logging.Logger
 import javax.inject.Inject
 import javax.inject.Singleton

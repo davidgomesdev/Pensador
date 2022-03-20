@@ -1,10 +1,10 @@
-package me.l3n.bot.discord.pensador.service.router
+package me.l3n.bot.discord.pensador.service.discord.router
 
 
 import dev.kord.core.entity.Message
 import dev.kord.core.entity.User
-import me.l3n.bot.discord.pensador.service.handler.CommandContext
-import me.l3n.bot.discord.pensador.service.handler.CommandHandler
+import me.l3n.bot.discord.pensador.service.discord.handler.CommandContext
+import me.l3n.bot.discord.pensador.service.discord.handler.CommandHandler
 import me.l3n.bot.discord.pensador.util.success
 import org.jboss.logging.Logger
 import javax.enterprise.inject.Instance

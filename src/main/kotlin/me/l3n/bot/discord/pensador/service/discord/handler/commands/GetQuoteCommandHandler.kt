@@ -1,10 +1,10 @@
-package me.l3n.bot.discord.pensador.service.handler.commands
+package me.l3n.bot.discord.pensador.service.discord.handler.commands
 
 import me.l3n.bot.discord.pensador.config.BotConfig
 import me.l3n.bot.discord.pensador.service.crawler.CrawlerService
-import me.l3n.bot.discord.pensador.service.handler.CommandContext
-import me.l3n.bot.discord.pensador.service.handler.CommandHandler
-import me.l3n.bot.discord.pensador.service.replyQuote
+import me.l3n.bot.discord.pensador.service.discord.handler.CommandContext
+import me.l3n.bot.discord.pensador.service.discord.handler.CommandHandler
+import me.l3n.bot.discord.pensador.service.discord.replyQuote
 import me.l3n.bot.discord.pensador.util.success
 import org.jboss.logging.Logger
 import javax.enterprise.context.ApplicationScoped
