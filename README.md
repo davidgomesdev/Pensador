@@ -46,6 +46,8 @@ You can choose which one by specifying the `source` in the yaml. (`goodreads` or
 
 ### Period 
 
-To change how often it runs, specify in the yaml as `cron-expr`. (uses Quarkus scheduler with the [quartz format](http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/crontrigger.html) by default)
+To change how often it runs, specify in the yaml as `cron-expr`. (
+uses [quartz format](http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/crontrigger.html)
+by [default](https://quarkus.io/guides/scheduler-reference#quarkus-scheduler_quarkus.scheduler.cron-type))
 
 By default is runs every 9, 12, 15, 18, 21 o'clock. 😳

@@ -33,7 +33,7 @@ class PensadorSchedulerTest {
     @BeforeEach
     fun setupMocks() {
         coEvery { crawlerMock crawlUniqueQuote any() }.returns(dummyQuote)
-        coEvery { serviceMock.sendChannelQuote(any()) }.returns(Unit)
+        coEvery { serviceMock.sendChannelQuote(any(), any()) }.returns(Unit)
         coEvery { serviceMock.cleanupFreshQuotes() }.returns(Unit)
     }
 
@@ -42,6 +42,6 @@ class PensadorSchedulerTest {
         runBlocking { scheduler.sendRandomQuote() }
 
         coVerify(exactly = 1) { crawlerMock crawlUniqueQuote 5 }
-        coVerify(exactly = 1) { serviceMock.sendChannelQuote(dummyQuote) }
+        coVerify(exactly = 1) { serviceMock.sendChannelQuote(any(), dummyQuote) }
     }
 }

@@ -56,15 +56,6 @@ class DiscordService(
     @Inject
     private lateinit var eventHandlers: Instance<EventHandler<*>>
 
-    private val channelMessageType: ChannelMessageType = when (botConfig.channelMessageType().lowercase()) {
-        "webhook" -> ChannelMessageType.Webhook
-        "embed" -> ChannelMessageType.Embed
-        else -> {
-            log.warn("Channel message type provided is invalid, defaulting to webhook")
-            ChannelMessageType.Webhook
-        }
-    }
-
     @DelicateCoroutinesApi
     @PostConstruct
     fun startup() {
@@ -89,8 +80,8 @@ class DiscordService(
         infoChannel.messages.collect { msg -> msg.delete() }
 
     @KordPreview
-    suspend infix fun sendChannelQuote(quote: Quote) {
-        val message = when (channelMessageType) {
+    suspend fun sendChannelQuote(type: ChannelMessageType, quote: Quote) {
+        val message = when (type) {
             ChannelMessageType.Webhook -> sendAsWebhook(quote)
             ChannelMessageType.Embed -> infoChannel.createMessage(createMessageWithEmbed(quote))
         }
@@ -122,10 +113,6 @@ class DiscordService(
         }
 }
 
-fun String.escapeForDiscord(): String = trim().replace(ESCAPE_DISCORD_REGEX, "\\\\$1")
-
-fun Quote.isValid() = text.escapeForDiscord().length < 2_000 && author.name.length < 80
-
 suspend fun Message.replyQuote(quote: Quote) = reply(createMessageWithEmbed(quote))
 
 fun createMessageWithEmbed(quote: Quote): MessageCreateBuilder.() -> Unit = {
@@ -143,6 +130,10 @@ fun createMessageWithEmbed(quote: Quote): MessageCreateBuilder.() -> Unit = {
         }
     }
 }
+
+fun String.escapeForDiscord(): String = trim().replace(ESCAPE_DISCORD_REGEX, "\\\\$1")
+
+fun Quote.isValid() = text.escapeForDiscord().length < 2_000 && author.name.length < 80
 
 enum class ChannelMessageType {
     Webhook, Embed
