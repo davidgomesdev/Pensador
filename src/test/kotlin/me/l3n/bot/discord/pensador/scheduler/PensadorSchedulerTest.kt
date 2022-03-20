@@ -10,6 +10,7 @@ import me.l3n.bot.discord.pensador.config.BotConfig
 import me.l3n.bot.discord.pensador.model.Author
 import me.l3n.bot.discord.pensador.model.Quote
 import me.l3n.bot.discord.pensador.service.crawler.CrawlerService
+import me.l3n.bot.discord.pensador.service.discord.ChannelMessageType
 import me.l3n.bot.discord.pensador.service.discord.DiscordService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -28,13 +29,20 @@ class PensadorSchedulerTest {
     private val botConfigMock: BotConfig = mockk { every { charLimit() } returns 5 }
 
     private val scheduler =
-        PensadorScheduler(serviceMock, crawlerInstanceMock, mockk(relaxUnitFun = true), botConfigMock)
+        PensadorScheduler(
+            crawlerInstanceMock,
+            mockk(relaxed = true),
+            botConfigMock,
+            serviceMock,
+            ChannelMessageType.Webhook
+        )
 
     @BeforeEach
     fun setupMocks() {
         coEvery { crawlerMock crawlUniqueQuote any() }.returns(dummyQuote)
         coEvery { serviceMock.sendChannelQuote(any(), any()) }.returns(Unit)
         coEvery { serviceMock.cleanupFreshQuotes() }.returns(Unit)
+        coEvery { botConfigMock.channelMessageType() }.returns("webhook")
     }
 
     @Test
@@ -42,6 +50,6 @@ class PensadorSchedulerTest {
         runBlocking { scheduler.sendRandomQuote() }
 
         coVerify(exactly = 1) { crawlerMock crawlUniqueQuote 5 }
-        coVerify(exactly = 1) { serviceMock.sendChannelQuote(any(), dummyQuote) }
+        coVerify(exactly = 1) { serviceMock.sendChannelQuote(ChannelMessageType.Webhook, dummyQuote) }
     }
 }

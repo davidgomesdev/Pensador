@@ -17,23 +17,15 @@ import javax.enterprise.inject.Instance
 
 @ApplicationScoped
 class PensadorScheduler(
-    private val discord: DiscordService,
     crawlerInstance: Instance<CrawlerService>,
     private val log: Logger,
     private val botConfig: BotConfig,
+    private val discord: DiscordService,
+    private val messageType: ChannelMessageType
 ) {
 
     private val crawler: CrawlerService =
         crawlerInstance.get() ?: throw IllegalArgumentException("Invalid source specified in config")
-
-    private val messageType: ChannelMessageType = when (botConfig.channelMessageType().lowercase()) {
-        "webhook" -> ChannelMessageType.Webhook
-        "embed" -> ChannelMessageType.Embed
-        else -> {
-            log.warn("Channel message type provided is invalid, defaulting to webhook")
-            ChannelMessageType.Webhook
-        }
-    }
 
     @KordPreview
     @Scheduled(cron = "{cron-expr}", concurrentExecution = SKIP)

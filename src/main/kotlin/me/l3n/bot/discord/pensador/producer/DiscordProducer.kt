@@ -5,14 +5,17 @@ import dev.kord.core.Kord
 import dev.kord.core.cache.data.WebhookData
 import dev.kord.core.entity.Webhook
 import kotlinx.coroutines.runBlocking
+import me.l3n.bot.discord.pensador.config.BotConfig
 import me.l3n.bot.discord.pensador.config.DiscordConfig
+import me.l3n.bot.discord.pensador.service.discord.ChannelMessageType
 import me.l3n.bot.discord.pensador.service.discord.util.getTextChannel
+import org.jboss.logging.Logger
 import javax.enterprise.context.ApplicationScoped
 import javax.enterprise.inject.Default
 import javax.inject.Singleton
 
 @ApplicationScoped
-class DiscordProducer(private val config: DiscordConfig) {
+class DiscordProducer(private val config: DiscordConfig, private val log: Logger) {
 
     @Singleton
     fun kord() = runBlocking {
@@ -35,4 +38,15 @@ class DiscordProducer(private val config: DiscordConfig) {
     fun infoChannel(kord: Kord) = runBlocking {
         kord.getTextChannel(config.channelId())
     }
+
+    @Singleton
+    fun channelMessageType(botConfig: BotConfig) =
+        when (botConfig.channelMessageType().lowercase()) {
+            "webhook" -> ChannelMessageType.Webhook
+            "embed" -> ChannelMessageType.Embed
+            else -> {
+                log.warn("Channel message type provided is invalid, defaulting to webhook")
+                ChannelMessageType.Webhook
+            }
+        }
 }
