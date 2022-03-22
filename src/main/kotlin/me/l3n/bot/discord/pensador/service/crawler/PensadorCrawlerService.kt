@@ -4,6 +4,7 @@ import io.quarkus.arc.lookup.LookupIfProperty
 import kotlinx.coroutines.runBlocking
 import me.l3n.bot.discord.pensador.config.PensadorConfig
 import me.l3n.bot.discord.pensador.config.PensadorUrlConfig
+import me.l3n.bot.discord.pensador.util.toPlainText
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
@@ -24,7 +25,7 @@ class PensadorCrawlerService(
         rootHtml.getElementsByClass("thought-card")
 
     override infix fun getQuoteContent(quoteHtml: Element): String =
-        quoteHtml.getElementsByTag("p").first()?.text() ?: throw IllegalArgumentException("No text")
+        quoteHtml.getElementsByTag("p").first()?.toPlainText() ?: throw IllegalArgumentException("No text")
 
     override fun getId(quoteHtml: Element): String =
         quoteHtml
@@ -43,7 +44,7 @@ class PensadorCrawlerService(
         val bioLink = authorHtml.attr("href")
         val html = runBlocking { parseHtml("${urlConfig.base()}$bioLink") }
 
-        val topHeader = html getImgFrom "top" ?: html getImgFrom "resumo" ?: return null
+        val topHeader = (html getImgFrom "top") ?: (html getImgFrom "resumo") ?: return null
 
         return topHeader.attr("src")
     }
