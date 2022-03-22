@@ -43,7 +43,7 @@ class PensadorCrawlerService(
         val bioLink = authorHtml.attr("href")
         val html = runBlocking { parseHtml("${urlConfig.base()}$bioLink") }
 
-        val topHeader = html getImgFrom "top" ?: html getImgFrom "resumo" ?: return null
+        val topHeader = (html getImgFrom "top") ?: (html getImgFrom "resumo") ?: return null
 
         return topHeader.attr("src")
     }

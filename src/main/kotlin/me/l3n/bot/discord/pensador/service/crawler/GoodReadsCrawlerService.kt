@@ -3,6 +3,7 @@ package me.l3n.bot.discord.pensador.service.crawler
 import io.quarkus.arc.lookup.LookupIfProperty
 import me.l3n.bot.discord.pensador.config.GoodReadsConfig
 import me.l3n.bot.discord.pensador.config.GoodReadsUrlConfig
+import me.l3n.bot.discord.pensador.util.toPlainText
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
@@ -26,11 +27,14 @@ class GoodReadsCrawlerService(
     override infix fun extractQuotesHtml(rootHtml: Document): Elements =
         rootHtml.getElementsByClass("quoteDetails")
 
-    override infix fun getQuoteContent(quoteHtml: Element): String =
-        extractQuote(
-            quoteHtml.getElementsByClass("quoteText").first()?.text()
-                ?: throw IllegalArgumentException("No quote text")
+    override infix fun getQuoteContent(quoteHtml: Element): String {
+        val textElement = quoteHtml
+            .getElementsByClass("quoteText").first() ?: throw IllegalArgumentException("No quote text")
+
+        return extractQuote(
+            textElement.toPlainText()
         )
+    }
 
     override fun getId(quoteHtml: Element): String =
         quoteHtml
