@@ -38,7 +38,7 @@ class QuoteRepositoryImpl(
         getLastDocument()?.quote
 
     override suspend fun exists(crawled: CrawledQuote): Boolean =
-        collection.findOne(MongoQuote::id eq crawled.id) == null
+        collection.findOne(MongoQuote::id eq crawled.id) != null
 
     override suspend fun save(crawled: CrawledQuote) {
         collection.insertOne(MongoQuote(null, crawled.id, crawled.quote))

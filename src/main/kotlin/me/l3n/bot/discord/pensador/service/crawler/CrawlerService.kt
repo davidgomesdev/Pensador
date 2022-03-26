@@ -37,7 +37,7 @@ abstract class CrawlerService {
                 crawlRandomQuote(charLimit)
             },
             isValid = { crawled ->
-                quoteRepo.exists(crawled)
+                !quoteRepo.exists(crawled)
             },
             beforeRetry = { log.debug("Retrying to crawl a valid quote") },
             afterRetry = { log.debug("Quote is not new") },
