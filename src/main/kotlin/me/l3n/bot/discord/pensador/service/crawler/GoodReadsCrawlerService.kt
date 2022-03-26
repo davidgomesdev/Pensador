@@ -10,7 +10,7 @@ import org.jsoup.select.Elements
 import javax.enterprise.context.ApplicationScoped
 
 
-private val EXTRACT_QUOTE_REGEX = "(?<=“)(.*?)(?=”)".toRegex(RegexOption.DOT_MATCHES_ALL)
+private val EXTRACT_QUOTE_REGEX = "(?<=“)(.*)(?=”)".toRegex(RegexOption.DOT_MATCHES_ALL)
 private val AUTHOR_NAME_REPLACE_REGEX = "[^A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ' .,]+|,\$".toRegex()
 
 @LookupIfProperty(name = "source", stringValue = "goodreads", lookupIfMissing = true)
