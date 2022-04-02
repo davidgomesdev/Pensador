@@ -34,27 +34,30 @@ class MessageCreateEventHandler(
 
         val dmChannel = author.getDmChannelOrNull()
 
-        if (dmChannel == null)
-            log.debug("Not allowed to reply")
+        if (dmChannel == null) log.debug("Not allowed to reply")
         else {
             dmChannel.withTyping {
                 val result = commandRouter.routeMessage(message, author)
 
-                if (result.isSuccess) {
-                    log.info("Command of '$username' routed successfully")
-                } else {
-                    val error = result.exceptionOrNull() ?: return@handler
-                    val response = when (error) {
-                        is IllegalArgumentException -> "Command not found ${Emojis.frowning2}"
-                        is IllegalStateException -> "Command not working! ${Emojis.worried}"
-                        else -> "Internal error ${Emojis.confused}"
-                    }
+                result.fold(
+                    onSuccess = {
+                        log.info("Command of '$username' routed successfully")
+                    },
+                    onFailure = { ex ->
+                        val response = getFailureResponse(ex)
 
-                    message.reply {
-                        content = response
-                    }
-                }
+                        message.reply {
+                            content = response
+                        }
+                    },
+                )
             }
         }
+    }
+
+    private fun getFailureResponse(ex: Throwable) = when (ex) {
+        is IllegalArgumentException -> "Command not found ${Emojis.frowning2}"
+        is IllegalStateException -> "Command not working! ${Emojis.worried}"
+        else -> "Internal error ${Emojis.confused}"
     }
 }

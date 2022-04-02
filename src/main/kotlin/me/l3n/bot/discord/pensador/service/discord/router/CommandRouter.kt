@@ -36,21 +36,20 @@ class CommandRouter(
 
         val replyMessage = handler.handle(args, CommandContext(message, user, channel))
 
-        if (replyMessage.isSuccess) {
-            log.info("Command '$commandName' handled succeeded")
-        } else {
-            val ex = replyMessage.exceptionOrNull()
+        return replyMessage.fold(
+            onSuccess = {
+                log.info("Command '$commandName' handled succeeded")
+                Result.success()
+            },
+            onFailure = { ex ->
+                log.error(
+                    "Command '$commandName' failed with args '${args.joinToString()}'",
+                    ex
+                )
 
-            log.error(
-                "Command '$commandName' failed with args '${args.joinToString()}'",
-                replyMessage.exceptionOrNull()
-            )
-
-            return Result
-                .failure(ex ?: IllegalStateException("Command '$commandName' failed without exception"))
-        }
-
-        return Result.success()
+                Result.failure(ex)
+            }
+        )
     }
 }
 
