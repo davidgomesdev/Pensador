@@ -94,7 +94,7 @@ abstract class CrawlerService {
     protected suspend fun parseHtml(url: String): Document {
         // Can't simply `.get<String>(url)`, because otherwise we get an "Unresolved Class" exception
         // that occurs only when using KMongo... Don't know why
-        val html = String(http.get<HttpResponse>(url).readBytes())
+        val html = String(http.get(url).readBytes())
 
         return Jsoup.parse(html)
     }
@@ -102,7 +102,7 @@ abstract class CrawlerService {
     protected abstract fun extractQuotesHtml(rootHtml: Document): Elements
 
     private suspend fun isImageUrl(url: String) = url.let {
-        url.isNotBlank() && http.get<HttpResponse>(url).let { response ->
+        url.isNotBlank() && http.get(url).let { response ->
             response.status == HttpStatusCode.OK &&
                 response.contentType()?.match(ContentType.Image.Any) ?: false
         }

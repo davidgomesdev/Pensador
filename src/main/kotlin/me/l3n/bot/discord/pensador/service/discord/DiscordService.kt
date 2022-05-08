@@ -26,7 +26,7 @@ import me.l3n.bot.discord.pensador.config.DiscordConfig
 import me.l3n.bot.discord.pensador.model.Quote
 import me.l3n.bot.discord.pensador.repository.QuoteRepository
 import me.l3n.bot.discord.pensador.service.discord.handler.EventHandler
-import me.l3n.bot.discord.pensador.service.discord.util.isNotMe
+import me.l3n.bot.discord.pensador.service.discord.util.isNotSelf
 import org.jboss.logging.Logger
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
@@ -96,12 +96,16 @@ class DiscordService(
 
         live().apply {
             on<ReactionAddEvent> { event ->
-                if (event.emoji == FAVORITE_EMOJI && discord isNotMe event.user)
+                if (event.emoji == FAVORITE_EMOJI && discord isNotSelf event.user) {
                     quoteRepository.favoriteLast(event.userId.value)
+                    log.info("User ${event.user.asUser().username} favorited last message")
+                }
             }
             on<ReactionRemoveEvent> { event ->
-                if (event.emoji == FAVORITE_EMOJI && discord isNotMe event.user)
+                if (event.emoji == FAVORITE_EMOJI && discord isNotSelf event.user) {
                     quoteRepository.unfavoriteLast(event.userId.value)
+                    log.info("User ${event.user.asUser().username} unfavorited last message")
+                }
             }
         }
     }
