@@ -18,7 +18,7 @@ val ktorVersion: String by project
 
 dependencies {
     // Kotlin++!
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
 
     // Quarkus
     implementation(
@@ -30,7 +30,7 @@ dependencies {
     implementation("io.quarkus:quarkus-config-yaml")
 
     // Discord
-    implementation("dev.kord:kord-core:0.7.4")
+    implementation("dev.kord:kord-core:0.8.0-M12")
     implementation("dev.kord.x:emoji:0.5.0")
 
     // HTTP
@@ -41,14 +41,14 @@ dependencies {
     implementation("org.jsoup:jsoup:1.14.3")
 
     // MongoDB
-    implementation("org.litote.kmongo:kmongo-coroutine:4.5.0")
+    implementation("org.litote.kmongo:kmongo-coroutine:4.5.1")
 
     // Tests
     testImplementation("io.quarkus:quarkus-junit5")
 
     testImplementation("io.mockk:mockk:1.12.3")
 
-    testImplementation("io.kotest:kotest-assertions-core:5.1.0")
+    testImplementation("io.kotest:kotest-assertions-core:5.3.0")
 }
 
 group = "me.l3n.bot.discord.pensador"

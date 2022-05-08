@@ -4,7 +4,6 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.util.*
 import me.l3n.bot.discord.pensador.model.Author
 import me.l3n.bot.discord.pensador.model.Quote
 import me.l3n.bot.discord.pensador.repository.QuoteRepository
@@ -95,7 +94,7 @@ abstract class CrawlerService {
     protected suspend fun parseHtml(url: String): Document {
         // Can't simply `.get<String>(url)`, because otherwise we get an "Unresolved Class" exception
         // that occurs only when using KMongo... Don't know why
-        val html = String(http.get<HttpResponse>(url).content.toByteArray())
+        val html = String(http.get<HttpResponse>(url).readBytes())
 
         return Jsoup.parse(html)
     }

@@ -16,9 +16,9 @@ class NullQuoteRepository : QuoteRepository {
 
     override suspend fun save(crawled: CrawledQuote) {}
 
-    override suspend fun getFavorites(userId: Long): Flow<Quote> = flowOf()
+    override suspend fun getFavorites(userId: ULong): Flow<Quote> = flowOf()
 
-    override suspend fun favoriteLast(userId: Long) {}
+    override suspend fun favoriteLast(userId: ULong) {}
 
-    override suspend fun unfavoriteLast(userId: Long) {}
+    override suspend fun unfavoriteLast(userId: ULong) {}
 }

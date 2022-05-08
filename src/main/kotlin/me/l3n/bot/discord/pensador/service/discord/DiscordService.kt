@@ -12,7 +12,8 @@ import dev.kord.core.event.message.ReactionAddEvent
 import dev.kord.core.event.message.ReactionRemoveEvent
 import dev.kord.core.live.live
 import dev.kord.core.live.on
-import dev.kord.rest.builder.message.MessageCreateBuilder
+import dev.kord.rest.builder.message.create.MessageCreateBuilder
+import dev.kord.rest.builder.message.create.embed
 import dev.kord.x.emoji.Emojis
 import dev.kord.x.emoji.toReaction
 import io.quarkus.runtime.Startup
@@ -90,10 +91,10 @@ class DiscordService(
     }
 
     @KordPreview
-    private suspend fun handleFavorites(message: Message) = with(message) {
+    private suspend fun handleFavorites(message: Message) = message.apply {
         addReaction(FAVORITE_EMOJI)
 
-        with(live()) {
+        live().apply {
             on<ReactionAddEvent> { event ->
                 if (event.emoji == FAVORITE_EMOJI && discord isNotMe event.user)
                     quoteRepository.favoriteLast(event.userId.value)
