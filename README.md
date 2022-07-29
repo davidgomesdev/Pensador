@@ -51,3 +51,9 @@ uses [quartz format](http://www.quartz-scheduler.org/documentation/quartz-2.3.0/
 by [default](https://quarkus.io/guides/scheduler-reference#quarkus-scheduler_quarkus.scheduler.cron-type))
 
 By default is runs every 9, 12, 15, 18, 21 o'clock. 😳
+
+## Quarkus guides
+
+As you may have noticed, this project uses Quarkus.
+
+If you're new to Quarkus, I have written two guides to help you understand its [dependency injection](https://davidsec.blog/2022/07/10/quarkus-cdi-guide/) and [configuration](https://davidsec.blog/2022/07/29/quarkus-guide-configuration/).
