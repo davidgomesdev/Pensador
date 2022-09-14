@@ -19,13 +19,13 @@ jobs:
     - name: Build Java Quarkus
       run: "./gradlew quarkusBuild"
     - name: Archive Java build
-      uses: thedoctor0/zip-release@master
+      uses: thedoctor0/zip-release@0.6.2
       with:
         filename: quarkusPackage.zip
         directory: build/quarkus-app
 
     - name: Upload archive
-      uses: ncipollo/release-action@v1.8.10
+      uses: ncipollo/release-action@v1.10.0
       with:
         artifacts: "build/quarkus-app/quarkusPackage.zip"
         token: ${{ secrets.GITHUB_TOKEN }}
