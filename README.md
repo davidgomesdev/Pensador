@@ -2,7 +2,7 @@
 
 "Just another Discord bot, this one sends random quotes :)" sums it up.
 
-It sends a random quote every [period](#Period) you define.
+It sends a random quote every [period](#period) you define.
 
 ![Periodic quote](imgs/periodic-quote.png)
 
