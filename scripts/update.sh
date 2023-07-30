@@ -49,4 +49,7 @@ fi
 
 echo "* Update complete *"
 
-bash scripts/run.sh
+tmux kill-session -t "Pensador" 2>/dev/null && echo "Killed existing tmux session"
+tmux new-session -d -s "Pensador" 'bash scripts/run.sh'
+
+echo "* Launched tmux session *"
