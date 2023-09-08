@@ -8,7 +8,7 @@ import me.l3n.bot.discord.pensador.util.toPlainText
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
-import javax.enterprise.context.ApplicationScoped
+import jakarta.enterprise.context.ApplicationScoped
 
 @LookupIfProperty(name = "source", stringValue = "pensador")
 @ApplicationScoped

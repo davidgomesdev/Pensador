@@ -11,9 +11,9 @@ interface QuoteRepository {
 
     suspend fun save(crawled: CrawledQuote)
 
-    suspend fun getFavorites(userId: Long): Flow<Quote>
+    suspend fun getFavorites(userId: ULong): Flow<Quote>
 
-    suspend fun favoriteLast(userId: Long)
+    suspend fun favoriteLast(userId: ULong)
 
-    suspend fun unfavoriteLast(userId: Long)
+    suspend fun unfavoriteLast(userId: ULong)
 }

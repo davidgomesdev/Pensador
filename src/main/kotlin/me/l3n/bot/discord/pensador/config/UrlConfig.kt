@@ -1,8 +1,8 @@
 package me.l3n.bot.discord.pensador.config
 
 import io.smallrye.config.ConfigMapping
-import javax.enterprise.context.ApplicationScoped
-import javax.enterprise.inject.Produces
+import jakarta.enterprise.context.ApplicationScoped
+import jakarta.enterprise.inject.Produces
 
 @ConfigMapping(prefix = "url")
 interface UrlConfig {

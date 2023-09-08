@@ -11,8 +11,8 @@ import org.litote.kmongo.coroutine.CoroutineCollection
 import org.litote.kmongo.coroutine.updateOne
 import org.litote.kmongo.descending
 import org.litote.kmongo.eq
-import javax.enterprise.context.ApplicationScoped
-import javax.enterprise.inject.Instance
+import jakarta.enterprise.context.ApplicationScoped
+import jakarta.enterprise.inject.Instance
 
 @ApplicationScoped
 @DefaultBean
@@ -32,7 +32,7 @@ class QuoteRepositoryImpl(
         collection.insertOne(MongoQuote(null, crawled.id, crawled.quote))
     }
 
-    override suspend fun favoriteLast(userId: Long) {
+    override suspend fun favoriteLast(userId: ULong) {
         val quote = getCurrentDocument() ?: throw IllegalStateException("There are no quotes")
 
         if (!quote.favoriteUserIds.contains(userId)) {
@@ -41,7 +41,7 @@ class QuoteRepositoryImpl(
         }
     }
 
-    override suspend fun getFavorites(userId: Long): Flow<Quote> {
+    override suspend fun getFavorites(userId: ULong): Flow<Quote> {
         val favorites = collection.find(
             MongoQuote::favoriteUserIds contains userId
         ).sort(
@@ -51,7 +51,7 @@ class QuoteRepositoryImpl(
         return favorites.toFlow().map { it.quote }
     }
 
-    override suspend fun unfavoriteLast(userId: Long) {
+    override suspend fun unfavoriteLast(userId: ULong) {
         val quote = getCurrentDocument() ?: throw IllegalStateException("There are no quotes")
 
         if (quote.favoriteUserIds.contains(userId)) {

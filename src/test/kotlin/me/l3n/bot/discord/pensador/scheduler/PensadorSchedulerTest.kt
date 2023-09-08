@@ -14,7 +14,7 @@ import me.l3n.bot.discord.pensador.service.discord.ChannelMessageType
 import me.l3n.bot.discord.pensador.service.discord.DiscordService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import javax.enterprise.inject.Instance
+import jakarta.enterprise.inject.Instance
 
 @KordPreview
 class PensadorSchedulerTest {

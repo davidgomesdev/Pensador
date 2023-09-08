@@ -11,8 +11,8 @@ import me.l3n.bot.discord.pensador.service.crawler.CrawlerService
 import me.l3n.bot.discord.pensador.service.discord.ChannelMessageType
 import me.l3n.bot.discord.pensador.service.discord.DiscordService
 import org.jboss.logging.Logger
-import javax.enterprise.context.ApplicationScoped
-import javax.enterprise.inject.Instance
+import jakarta.enterprise.context.ApplicationScoped
+import jakarta.enterprise.inject.Instance
 
 
 @ApplicationScoped

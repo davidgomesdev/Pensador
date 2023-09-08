@@ -6,8 +6,8 @@ import me.l3n.bot.discord.pensador.model.MongoQuote
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo
-import javax.enterprise.context.ApplicationScoped
-import javax.inject.Singleton
+import jakarta.enterprise.context.ApplicationScoped
+import jakarta.inject.Singleton
 
 
 @ApplicationScoped

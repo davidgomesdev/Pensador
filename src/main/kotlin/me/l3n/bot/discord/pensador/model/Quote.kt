@@ -6,7 +6,7 @@ data class MongoQuote(
     val _id: ObjectId?,
     val id: String,
     val quote: Quote,
-    val favoriteUserIds: MutableList<Long> = mutableListOf(),
+    val favoriteUserIds: MutableList<ULong> = mutableListOf(),
 )
 
 data class Quote(

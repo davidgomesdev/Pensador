@@ -8,8 +8,8 @@ import dev.kord.x.emoji.Emojis
 import me.l3n.bot.discord.pensador.service.discord.handler.EventHandler
 import me.l3n.bot.discord.pensador.service.discord.router.CommandRouter
 import org.jboss.logging.Logger
-import javax.inject.Inject
-import javax.inject.Singleton
+import jakarta.inject.Inject
+import jakarta.inject.Singleton
 
 
 @Singleton
@@ -22,7 +22,7 @@ class MessageCreateEventHandler(
     private lateinit var log: Logger
 
     override val handler: suspend MessageCreateEvent.() -> Unit = handler@{
-        if (getGuild() != null) return@handler
+        if (getGuildOrNull() != null) return@handler
 
         val author = message.author ?: return@handler
 

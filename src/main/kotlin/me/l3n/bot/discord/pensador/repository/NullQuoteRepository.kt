@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import me.l3n.bot.discord.pensador.model.Quote
 import me.l3n.bot.discord.pensador.service.crawler.CrawledQuote
-import javax.enterprise.context.ApplicationScoped
+import jakarta.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 @IfBuildProperty(name = "disabled.persistence", stringValue = "true")
@@ -16,9 +16,9 @@ class NullQuoteRepository : QuoteRepository {
 
     override suspend fun save(crawled: CrawledQuote) {}
 
-    override suspend fun getFavorites(userId: Long): Flow<Quote> = flowOf()
+    override suspend fun getFavorites(userId: ULong): Flow<Quote> = flowOf()
 
-    override suspend fun favoriteLast(userId: Long) {}
+    override suspend fun favoriteLast(userId: ULong) {}
 
-    override suspend fun unfavoriteLast(userId: Long) {}
+    override suspend fun unfavoriteLast(userId: ULong) {}
 }

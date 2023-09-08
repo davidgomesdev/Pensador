@@ -7,9 +7,9 @@ import me.l3n.bot.discord.pensador.service.discord.handler.CommandContext
 import me.l3n.bot.discord.pensador.service.discord.handler.CommandHandler
 import me.l3n.bot.discord.pensador.util.success
 import org.jboss.logging.Logger
-import javax.enterprise.inject.Instance
-import javax.inject.Inject
-import javax.inject.Singleton
+import jakarta.enterprise.inject.Instance
+import jakarta.inject.Inject
+import jakarta.inject.Singleton
 
 
 @Singleton
