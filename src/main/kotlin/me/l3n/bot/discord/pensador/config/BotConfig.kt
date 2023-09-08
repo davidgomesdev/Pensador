@@ -12,7 +12,9 @@ interface BotConfig {
     @WithDefault("2000")
     fun charLimit(): Int
 
-    // Valid styles: webhook, embed
+    /**
+     * Valid styles: webhook, embed
+      */
     @WithDefault("webhook")
     fun channelMessageType(): String
 }

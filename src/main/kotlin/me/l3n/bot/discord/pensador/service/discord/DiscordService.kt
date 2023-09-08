@@ -12,10 +12,12 @@ import dev.kord.core.event.message.ReactionAddEvent
 import dev.kord.core.event.message.ReactionRemoveEvent
 import dev.kord.core.live.live
 import dev.kord.core.live.on
-import dev.kord.rest.builder.message.MessageCreateBuilder
+import dev.kord.rest.builder.message.create.MessageCreateBuilder
+import dev.kord.rest.builder.message.create.embed
 import dev.kord.x.emoji.Emojis
 import dev.kord.x.emoji.toReaction
 import io.quarkus.runtime.Startup
+import jakarta.enterprise.context.ApplicationScoped
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers.Unconfined
 import kotlinx.coroutines.GlobalScope
@@ -27,11 +29,10 @@ import me.l3n.bot.discord.pensador.repository.QuoteRepository
 import me.l3n.bot.discord.pensador.service.discord.handler.EventHandler
 import me.l3n.bot.discord.pensador.service.discord.util.isNotMe
 import org.jboss.logging.Logger
-import javax.annotation.PostConstruct
-import javax.annotation.PreDestroy
-import javax.enterprise.context.ApplicationScoped
-import javax.enterprise.inject.Instance
-import javax.inject.Inject
+import jakarta.annotation.PostConstruct
+import jakarta.annotation.PreDestroy
+import jakarta.enterprise.inject.Instance
+import jakarta.inject.Inject
 
 
 val ESCAPE_DISCORD_REGEX = "([*_~`>|])".toRegex()
@@ -62,6 +63,7 @@ class DiscordService(
         registerEvents()
 
         log.debug("Logging in...")
+
         GlobalScope.launch(Unconfined) { discord.login() }
     }
 
@@ -118,7 +120,7 @@ suspend fun Message.replyQuote(quote: Quote) = reply(createMessageWithEmbed(quot
 fun createMessageWithEmbed(quote: Quote): MessageCreateBuilder.() -> Unit = {
     val quoteAuthor = quote.author
 
-    this.embed {
+    embed {
         description = quote.text
 
         thumbnail {

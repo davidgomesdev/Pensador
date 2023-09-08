@@ -6,8 +6,8 @@ import me.l3n.bot.discord.pensador.service.discord.handler.CommandHandler
 import me.l3n.bot.discord.pensador.service.discord.replyQuote
 import me.l3n.bot.discord.pensador.util.success
 import org.jboss.logging.Logger
-import javax.enterprise.context.ApplicationScoped
-import javax.inject.Inject
+import jakarta.enterprise.context.ApplicationScoped
+import jakarta.inject.Inject
 
 @ApplicationScoped
 class LastCommandHandler(

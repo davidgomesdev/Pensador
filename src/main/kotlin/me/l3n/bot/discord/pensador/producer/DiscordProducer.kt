@@ -10,9 +10,9 @@ import me.l3n.bot.discord.pensador.config.DiscordConfig
 import me.l3n.bot.discord.pensador.service.discord.ChannelMessageType
 import me.l3n.bot.discord.pensador.service.discord.util.getTextChannel
 import org.jboss.logging.Logger
-import javax.enterprise.context.ApplicationScoped
-import javax.enterprise.inject.Default
-import javax.inject.Singleton
+import jakarta.enterprise.context.ApplicationScoped
+import jakarta.enterprise.inject.Default
+import jakarta.inject.Singleton
 
 @ApplicationScoped
 class DiscordProducer(private val config: DiscordConfig, private val log: Logger) {

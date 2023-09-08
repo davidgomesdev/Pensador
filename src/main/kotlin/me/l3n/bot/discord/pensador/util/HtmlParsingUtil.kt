@@ -67,7 +67,7 @@ private class FormattingVisitor : NodeVisitor {
             (accum.isEmpty() || StringUtil.`in`(accum.substring(accum.length - 1), " ", "\n"))
         ) return  // don't accumulate long runs of empty spaces
 
-        if (text.length + width > maxWidth) { // won't fit, needs to wrap
+        if (text.length + width > MAX_WIDTH) { // won't fit, needs to wrap
             val words = text.split("\\s+").toTypedArray()
 
             for (i in words.indices) {
@@ -77,7 +77,7 @@ private class FormattingVisitor : NodeVisitor {
                 if (!last) // insert a space if not the last word
                     word = "$word "
 
-                if (word.length + width > maxWidth) { // wrap and reset counter
+                if (word.length + width > MAX_WIDTH) { // wrap and reset counter
                     accum.append("\n").append(word)
                     width = word.length
                 } else {
@@ -96,6 +96,6 @@ private class FormattingVisitor : NodeVisitor {
     }
 
     companion object {
-        private const val maxWidth = 80
+        private const val MAX_WIDTH = 80
     }
 }
