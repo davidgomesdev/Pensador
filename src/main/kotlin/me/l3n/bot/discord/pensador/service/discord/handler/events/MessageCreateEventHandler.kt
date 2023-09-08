@@ -4,6 +4,7 @@ import dev.kord.core.Kord
 import dev.kord.core.behavior.channel.withTyping
 import dev.kord.core.behavior.reply
 import dev.kord.core.event.message.MessageCreateEvent
+import dev.kord.core.on
 import dev.kord.x.emoji.Emojis
 import me.l3n.bot.discord.pensador.service.discord.handler.EventHandler
 import me.l3n.bot.discord.pensador.service.discord.router.CommandRouter
@@ -16,17 +17,23 @@ import jakarta.inject.Singleton
 class MessageCreateEventHandler(
     private val discord: Kord,
     private val commandRouter: CommandRouter,
-) : EventHandler<MessageCreateEvent>(MessageCreateEvent::class) {
+) : EventHandler {
 
     @Inject
     private lateinit var log: Logger
 
-    override val handler: suspend MessageCreateEvent.() -> Unit = handler@{
-        if (getGuildOrNull() != null) return@handler
+    override fun register(discord: Kord) {
+        discord.on<MessageCreateEvent> {
+            handle(this)
+        }
+    }
 
-        val author = message.author ?: return@handler
+    private suspend fun handle(event: MessageCreateEvent) {
+        if (event.getGuildOrNull() != null) return
 
-        if (author == discord.getSelf()) return@handler
+        val author = event.message.author ?: return
+
+        if (author == discord.getSelf()) return
 
         val username = author.username
 
@@ -37,7 +44,7 @@ class MessageCreateEventHandler(
         if (dmChannel == null) log.debug("Not allowed to reply")
         else {
             dmChannel.withTyping {
-                val result = commandRouter.routeMessage(message, author)
+                val result = commandRouter.routeMessage(event.message, author)
 
                 result.fold(
                     onSuccess = {
@@ -46,7 +53,7 @@ class MessageCreateEventHandler(
                     onFailure = { ex ->
                         val response = getFailureResponse(ex)
 
-                        message.reply {
+                        event.message.reply {
                             content = response
                         }
                     },

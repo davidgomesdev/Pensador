@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.flowOf
 import me.l3n.bot.discord.pensador.model.Quote
 import me.l3n.bot.discord.pensador.service.crawler.CrawledQuote
 import jakarta.enterprise.context.ApplicationScoped
+import me.l3n.bot.discord.pensador.model.Author
 
 @ApplicationScoped
 @IfBuildProperty(name = "disabled.persistence", stringValue = "true")
@@ -16,7 +17,7 @@ class NullQuoteRepository : QuoteRepository {
 
     override suspend fun save(crawled: CrawledQuote) {}
 
-    override suspend fun getFavorites(userId: ULong): Flow<Quote> = flowOf()
+    override suspend fun getFavorites(userId: ULong): Flow<Quote> = flowOf(Quote(Author("Pensador"), "Feature not enabled"))
 
     override suspend fun favoriteLast(userId: ULong) {}
 
