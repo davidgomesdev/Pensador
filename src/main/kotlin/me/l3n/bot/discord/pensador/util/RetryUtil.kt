@@ -17,27 +17,3 @@ inline fun <T> retryUntil(
 
     return value
 }
-
-inline fun <T> retry(
-    times: Int,
-    block: () -> Result<T>,
-    beforeRetry: (Int) -> Unit = {},
-    afterRetry: (Throwable) -> Unit = {},
-    retryExceeded: (Int) -> Unit = {},
-): Result<T> {
-    var value = block()
-
-    if (value.isSuccess) return value
-
-    repeat(times) { i ->
-        beforeRetry(i + 1)
-        value = block()
-
-        if (value.isFailure)
-            afterRetry(value.exceptionOrNull()!!)
-    }
-
-    retryExceeded(times)
-
-    return value
-}
