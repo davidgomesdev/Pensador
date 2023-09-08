@@ -33,6 +33,7 @@ import jakarta.annotation.PostConstruct
 import jakarta.annotation.PreDestroy
 import jakarta.enterprise.inject.Instance
 import jakarta.inject.Inject
+import kotlinx.coroutines.runBlocking
 
 
 val ESCAPE_DISCORD_REGEX = "([*_~`>|])".toRegex()
@@ -55,7 +56,7 @@ class DiscordService(
     private lateinit var infoChannel: TextChannel
 
     @Inject
-    private lateinit var eventHandlers: Instance<EventHandler<*>>
+    private lateinit var eventHandlers: Instance<EventHandler>
 
     @DelicateCoroutinesApi
     @PostConstruct
@@ -63,6 +64,10 @@ class DiscordService(
         registerEvents()
 
         log.debug("Logging in...")
+
+        runBlocking {
+            discord.createGlobalUserCommand("Get my favorites")
+        }
 
         GlobalScope.launch(Unconfined) { discord.login() }
     }

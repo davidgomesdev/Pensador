@@ -1,6 +1,8 @@
 package me.l3n.bot.discord.pensador.service.discord.handler.events
 
+import dev.kord.core.Kord
 import dev.kord.core.event.gateway.ReadyEvent
+import dev.kord.core.on
 import me.l3n.bot.discord.pensador.service.discord.handler.EventHandler
 import org.jboss.logging.Logger
 import jakarta.inject.Inject
@@ -8,12 +10,12 @@ import jakarta.inject.Singleton
 
 
 @Singleton
-class ReadyEventHandler : EventHandler<ReadyEvent>(ReadyEvent::class) {
+class ReadyEventHandler : EventHandler {
 
     @Inject
     private lateinit var log: Logger
 
-    override val handler: suspend ReadyEvent.() -> Unit = {
-        log.info("Logged in!")
+    override fun register(discord: Kord) {
+        discord.on<ReadyEvent> { log.info("Logged in!") }
     }
 }

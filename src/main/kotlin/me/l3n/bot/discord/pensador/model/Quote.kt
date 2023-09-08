@@ -16,5 +16,5 @@ data class Quote(
 
 data class Author(
     val name: String,
-    val imageUrl: String?,
+    val imageUrl: String? = null,
 )
